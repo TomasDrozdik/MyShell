@@ -5,52 +5,43 @@
 	#include <sys/queue.h>
 #endif
 
-enum redirect_sgn {
+typedef enum {
 	IN_RED,
 	OUT_RED,
 	OUT_APPEND_RED,
-};
-
-enum type {
-	EXPR,
-	SEMI_EXPR,
-	PIPE_EXPR,
-	REDIRECT_EXPR,
-	CMD,
-	REDIRECTION,
-};
+} redirect_sgn;
 
 /* slist struct defs for queue.h */
 struct semi_expr_entry {
 	struct semi_expr_s *item;
-	SLIST_ENTRY(semi_expr_entry) entries;
+	STAILQ_ENTRY(semi_expr_entry) entries;
 };
 
 struct pipe_expr_entry{
 	struct semi_expr_s *item;
-	SLIST_ENTRY(pipe_expr_entry) entries;
+	STAILQ_ENTRY(pipe_expr_entry) entries;
 };
 
 struct redirect_expr_entry {
 	struct semi_expr_s *item;
-	SLIST_ENTRY(redirect_expr_entry) entries;
+	STAILQ_ENTRY(redirect_expr_entry) entries;
 };
 
 struct arg_entry {
 	char *arg;
-	SLIST_ENTRY(arg_entry) entries;
+	STAILQ_ENTRY(arg_entry) entries;
 };
 
 struct redirection_entry {
 	struct semi_expr_s *item;
-	SLIST_ENTRY(redirection_entry) entries;
+	STAILQ_ENTRY(redirection_entry) entries;
 };
 
 /* typedefs for queue.h */
-typedef SLIST_HEAD(semi_expr_slist, semi_expr_entry) semi_expr_slist_t;
-typedef SLIST_HEAD(pipe_expr_slist, pipe_expr_entry) pipe_expr_slist_t;
-typedef SLIST_HEAD(arg_slist, arg_entry) arg_slist_t;
-typedef SLIST_HEAD(redirect_expr_slist, redirect_expr_entry)
+typedef STAILQ_HEAD(semi_expr_deque, semi_expr_entry) semi_expr_slist_t;
+typedef STAILQ_HEAD(pipe_expr_deque, pipe_expr_entry) pipe_expr_slist_t;
+typedef STAILQ_HEAD(arg_deque, arg_entry) arg_slist_t;
+typedef STAILQ_HEAD(redirect_expr_deque, redirect_expr_entry)
 	redirect_expr_slist_t;
 
 /* AST structures */
@@ -88,19 +79,28 @@ struct redirection_s {
 /* AST structures constructors */
 /* returns pointer to default empty structure */
 struct expr_s *
-new_expr();
+new_expr(void);
 
 struct semi_expr_s *
-new_semi_expr();
+new_semi_expr(void);
 
 struct pipe_expr_s *
-new_pipe_expr();
+new_pipe_expr(void);
 
 struct redirect_expr_s *
-new_redirect_expr();
+new_redirect_expr(void);
 
 struct cmd_s *
-new_cmd();
+new_cmd(void);
 
 struct redirection_s *
-new_redirection(redirect_sgn sgn, char *fname);
+new_redirection(const redirect_sgn sgn, const char *fname);
+
+/* Functions for adding new items to lists in structs */
+/* imitation of std::deque */
+
+struct cmd_s *
+push_front(struct cmd_s *obj, const char *item);
+
+void
+print(struct cmd_s *obj);

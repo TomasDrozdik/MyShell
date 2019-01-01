@@ -1,11 +1,10 @@
-MAKE=make
+.PHONY: cstyle all clean $(SUBDIRS)
 
-SUBDIRS=
+MAKE= make
+SUBDIRS= src
 
-all: $(SUBDIRS) cstyle
+all: $(SUBDIRS)
 
 $(SUBDIRS) :
 	@echo "=== $@"
 	@$(MAKE) -C $@
-
-.PHONY: cstyle all clean $(SUBDIRS)

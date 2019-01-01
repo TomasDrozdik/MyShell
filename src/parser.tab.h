@@ -42,6 +42,16 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 6 "parser.y" /* yacc.c:1906  */
+
+// Include used structs
+#ifndef PARSER_STRUCTS_H
+	#define PARSER_STRUCTS_H
+	#include "parser_structs.h"
+#endif
+
+#line 55 "parser.tab.h" /* yacc.c:1906  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -49,8 +59,8 @@ extern int yydebug;
   enum yytokentype
   {
     SEMICOLON = 258,
-    END_OF_LINE = 259,
-    END_OF_FILE = 260,
+    END_OF_FILE = 259,
+    END_OF_LINE = 260,
     PIPE = 261,
     ID = 262,
     REDIRECT_SGN = 263
@@ -62,12 +72,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 3 "parser.y" /* yacc.c:1906  */
+#line 32 "parser.y" /* yacc.c:1906  */
 
 	char *str;
 	redirect_sgn red_sgn;
 
-#line 71 "parser.tab.h" /* yacc.c:1906  */
+	struct cmd_s *cmd_s;
+
+#line 83 "parser.tab.h" /* yacc.c:1906  */
 };
 
 typedef union YYSTYPE YYSTYPE;

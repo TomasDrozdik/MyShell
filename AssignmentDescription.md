@@ -140,7 +140,7 @@ you start your shell from.
 
 	mysh$ /usr/bin/echo X
 	X
-	mysh$
+mysh$
 
 	mysh$ echo X; date; echo Z
 	X
@@ -239,7 +239,7 @@ you start your shell from.
 	- the shell errors out on first syntax error as a usual shell
 	  does.  E.g:
 
-	Bash$ cat test.sh 
+	Bash$ cat test.sh
 	echo X
 	date
 	;;

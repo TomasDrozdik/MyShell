@@ -1,6 +1,15 @@
-TARGETS= parser.tab.c parser.tab.h lex.yy.c myshell
+.PHONY: cstyle all clean cwd
 
-all: myshell
+CC=cc
+CFLAGS=-Wall -Wshadow -Wpointer-arith -Wcast-qual \
+	-Wstrict-prototypes -g
+OUT_FOLDER=../build
+
+TARGETS= parser.tab.c parser.tab.h lex.yy.c myshell
+OBJ_FILES= main.o parser_structs.o reader.o
+
+
+all: cwd myshell
 
 parser.tab.c: parser.y
 	bison -d parser.y
@@ -10,9 +19,20 @@ parser.tab.h: parser.tab.c
 lex.yy.c: scanner.lex parser.tab.h
 	flex scanner.lex
 
-myshell: parser.tab.c lex.yy.c
-	cc -o $@ parser.tab.c lex.yy.c -lfl
+%.o: %.c
+	$(CC) $(CFLAGS) -c $<
 
-.PHONY: clean all
+myshell: parser.tab.c lex.yy.c $(OBJ_FILES)
+	$(CC) -o $@ $^ -lfl -lreadline
+
 clean:
-	rm -rf $(TARGETS)
+	rm -rf $(TARGETS) $(OBJ_FILES)
+
+cstyle:
+	@echo "Checking C style"
+	@find . -type -name '*.[ch]' | while read file; do \
+		../cstyle.pl $$file; \
+	done | grep ':'; \
+	if [ $$? -eq 0]; then \
+		exit 1;
+	fi

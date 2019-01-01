@@ -33,8 +33,8 @@
 /* Undocumented macros, especially those whose name start with YY_,
    are private implementation details.  Do not rely on them.  */
 
-#ifndef YY_YY_PARSER_TAB_H_INCLUDED
-# define YY_YY_PARSER_TAB_H_INCLUDED
+#ifndef YY_YY_BUILD_PARSER_TAB_H_INCLUDED
+# define YY_YY_BUILD_PARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -42,23 +42,47 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 6 "parser.y" /* yacc.c:1906  */
+
+// Include used structs
+#ifndef PARSER_STRUCTS_H
+	#define PARSER_STRUCTS_H
+	#include "parser_structs.h"
+#endif
+
+#line 55 "../build/parser.tab.h" /* yacc.c:1906  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    ID = 258,
-    SEMICOLON = 259,
-    EOL = 260,
+    SEMICOLON = 258,
+    END_OF_FILE = 259,
+    END_OF_LINE = 260,
     PIPE = 261,
-    REDIRECT_SGN = 262
+    ID = 262,
+    REDIRECT_SGN = 263
   };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 32 "parser.y" /* yacc.c:1906  */
+
+	char *str;
+	redirect_sgn red_sgn;
+
+	struct cmd_s *cmd_s;
+
+#line 83 "../build/parser.tab.h" /* yacc.c:1906  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -68,4 +92,4 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_PARSER_TAB_H_INCLUDED  */
+#endif /* !YY_YY_BUILD_PARSER_TAB_H_INCLUDED  */
