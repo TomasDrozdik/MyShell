@@ -51,8 +51,10 @@ struct expr_s {
 };
 
 struct semi_expr_s {
-	pipe_expr_slist_t pipe_exprs;
-	int len;
+	//pipe_expr_slist_t pipe_exprs;
+	//int len;
+	//TODO: modification for PHASE1
+	struct cmd_s *cmd;
 };
 
 struct pipe_expr_s {
@@ -94,13 +96,26 @@ struct cmd_s *
 new_cmd(void);
 
 struct redirection_s *
-new_redirection(const redirect_sgn sgn, const char *fname);
+new_redirection(redirect_sgn sgn, char *fname);
 
 /* Functions for adding new items to lists in structs */
 /* imitation of std::deque */
 
 struct cmd_s *
-push_front(struct cmd_s *obj, const char *item);
+push_front_cmd(struct cmd_s *obj, char *item);
+
+struct expr_s *
+push_front_expr(struct expr_s *obj, struct semi_expr_s *item);
 
 void
-print(struct cmd_s *obj);
+print_cmd(struct cmd_s *obj);
+
+void
+print_expr(struct expr_s *obj);
+
+void
+print_semi(struct semi_expr_s *obj);
+
+/* Function to free the AST */
+void
+free_expr(struct expr_s *expr);

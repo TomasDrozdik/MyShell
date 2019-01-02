@@ -354,8 +354,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 12
-#define YY_END_OF_BUFFER 13
+#define YY_NUM_RULES 13
+#define YY_END_OF_BUFFER 14
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -365,8 +365,8 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[21] =
     {   0,
-        0,    0,    0,    0,   13,    9,    1,   10,    2,   11,
-        4,    7,    6,    5,    3,   12,    9,    8,    3,    0
+        0,    0,    0,    0,   14,   10,    1,   11,    2,   12,
+        5,    8,    7,    6,    3,    4,   10,    9,    3,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -474,10 +474,11 @@ char *yytext;
 #endif
 
 extern void yyerror(char const *);
+extern int line_num;
 
-#line 478 "lex.yy.c"
+#line 479 "lex.yy.c"
 
-#line 480 "lex.yy.c"
+#line 481 "lex.yy.c"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -695,10 +696,10 @@ YY_DECL
 		}
 
 	{
-#line 38 "scanner.lex"
+#line 39 "scanner.lex"
 
 
-#line 701 "lex.yy.c"
+#line 702 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -757,88 +758,101 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 40 "scanner.lex"
+#line 41 "scanner.lex"
 /* ignore whitespaces */
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 42 "scanner.lex"
+#line 43 "scanner.lex"
 { BEGIN(COMMENT); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 44 "scanner.lex"
+#line 45 "scanner.lex"
 /* ignore comments */
 	YY_BREAK
 case YY_STATE_EOF(COMMENT):
-#line 46 "scanner.lex"
-{
-						BEGIN(INITIAL);
-					}
+#line 47 "scanner.lex"
+{ BEGIN(INITIAL); }
 	YY_BREAK
 case 4:
+/* rule 4 can match eol */
 YY_RULE_SETUP
-#line 50 "scanner.lex"
-{ return SEMICOLON;	}
+#line 49 "scanner.lex"
+{
+				++line_num;
+				BEGIN(INITIAL);
+			}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 52 "scanner.lex"
-{ return PIPE; }
+#line 54 "scanner.lex"
+{ return SEMICOLON;	}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 54 "scanner.lex"
+#line 56 "scanner.lex"
+{ return PIPE; }
+	YY_BREAK
+case 7:
+YY_RULE_SETUP
+#line 58 "scanner.lex"
 {
 		yylval.red_sgn = OUT_RED;
 		return REDIRECT_SGN;
 	}
 	YY_BREAK
-case 7:
+case 8:
 YY_RULE_SETUP
-#line 59 "scanner.lex"
+#line 63 "scanner.lex"
 {
 		yylval.red_sgn = IN_RED;
 		return REDIRECT_SGN;
 	}
 	YY_BREAK
-case 8:
+case 9:
 YY_RULE_SETUP
-#line 64 "scanner.lex"
+#line 68 "scanner.lex"
 {
 			yylval.red_sgn = OUT_APPEND_RED;
 			return REDIRECT_SGN;
 		}
 	YY_BREAK
-case 9:
+case 10:
 YY_RULE_SETUP
-#line 69 "scanner.lex"
+#line 73 "scanner.lex"
 {
 			yylval.str = strdup(yytext);
 			return ID;
 		}
 	YY_BREAK
-case 10:
-/* rule 10 can match eol */
-YY_RULE_SETUP
-#line 74 "scanner.lex"
-{ return END_OF_LINE; }
-	YY_BREAK
-case YY_STATE_EOF(INITIAL):
-#line 76 "scanner.lex"
-{ return END_OF_FILE; }
-	YY_BREAK
 case 11:
+/* rule 11 can match eol */
 YY_RULE_SETUP
 #line 78 "scanner.lex"
-{ yyerror("Mystery character"); }
+{
+		++line_num;
+		return END_OF_LINE;
+	}
+	YY_BREAK
+case YY_STATE_EOF(INITIAL):
+#line 83 "scanner.lex"
+{ return END_OF_FILE; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 80 "scanner.lex"
+#line 85 "scanner.lex"
+{
+		char mystery_char[2] = { yytext[0], '\0' };
+		yyerror(mystery_char);
+	}
+	YY_BREAK
+case 13:
+YY_RULE_SETUP
+#line 90 "scanner.lex"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 841 "lex.yy.c"
+#line 855 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1841,6 +1855,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 80 "scanner.lex"
+#line 90 "scanner.lex"
 
 

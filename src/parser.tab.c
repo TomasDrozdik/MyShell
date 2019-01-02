@@ -65,7 +65,7 @@
 
 
 /* First part of user prologue.  */
-#line 14 "parser.y" /* yacc.c:338  */
+#line 15 "parser.y" /* yacc.c:338  */
 
 #ifndef STDIO_H
 	#define STDIO_H
@@ -75,15 +75,27 @@
 	#define STDIO_H
 	#include <stdio.h>
 #endif
+#ifndef STRING_H
+	#define STRING_H
+	#include <string.h>
+#endif
 
-// Forward decl
+/* Forward decl */
 void yyerror(char const *);
 
-// Let bison know of lex
+/* let bison know of lex */
 extern int yylex();
 
+/* way of passing AST result out of bison */
+extern struct expr_s *expr_result;
 
-#line 87 "parser.tab.c" /* yacc.c:338  */
+/* for yyerror */
+extern int line_num;
+extern int error_occured;
+extern int return_val;
+
+
+#line 99 "parser.tab.c" /* yacc.c:338  */
 # ifndef YY_NULLPTR
 #  if defined __cplusplus
 #   if 201103L <= __cplusplus
@@ -101,7 +113,7 @@ extern int yylex();
 # undef YYERROR_VERBOSE
 # define YYERROR_VERBOSE 1
 #else
-# define YYERROR_VERBOSE 0
+# define YYERROR_VERBOSE 1
 #endif
 
 /* In a future release of Bison, this section will be replaced
@@ -116,15 +128,15 @@ extern int yylex();
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 6 "parser.y" /* yacc.c:353  */
+#line 7 "parser.y" /* yacc.c:353  */
 
-// Include used structs
+/* Include user structs for %union types */
 #ifndef PARSER_STRUCTS_H
 	#define PARSER_STRUCTS_H
 	#include "parser_structs.h"
 #endif
 
-#line 128 "parser.tab.c" /* yacc.c:353  */
+#line 140 "parser.tab.c" /* yacc.c:353  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -145,14 +157,16 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 32 "parser.y" /* yacc.c:353  */
+#line 45 "parser.y" /* yacc.c:353  */
 
 	char *str;
 	redirect_sgn red_sgn;
 
+	struct expr_s *expr_s;
+	struct semi_expr_s *semi_expr_s;
 	struct cmd_s *cmd_s;
 
-#line 156 "parser.tab.c" /* yacc.c:353  */
+#line 170 "parser.tab.c" /* yacc.c:353  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -398,18 +412,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  8
+#define YYFINAL  10
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   7
+#define YYLAST   12
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  9
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  4
+#define YYNNTS  7
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  8
+#define YYNRULES  12
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  12
+#define YYNSTATES  17
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -456,18 +470,19 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    72,    72,    79,    86,    92,   100,   108,   112
+       0,    87,    87,    92,    99,   100,   103,   112,   115,   119,
+     125,   132,   135
 };
 #endif
 
-#if YYDEBUG || YYERROR_VERBOSE || 0
+#if YYDEBUG || YYERROR_VERBOSE || 1
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "SEMICOLON", "END_OF_FILE",
-  "END_OF_LINE", "PIPE", "ID", "REDIRECT_SGN", "$accept", "expr", "cmd",
-  "ids", YY_NULLPTR
+  "END_OF_LINE", "PIPE", "ID", "REDIRECT_SGN", "$accept", "expr", "end",
+  "semi_expr", "semi_exprs", "cmd", "ids", YY_NULLPTR
 };
 #endif
 
@@ -494,8 +509,8 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -4,    -6,    -6,    -5,     6,     0,    -5,    -6,    -6,    -6,
-      -6,    -6
+      -4,    -6,    -6,    -5,     6,    -6,     4,    -6,    -5,    -6,
+      -6,     1,     0,    -6,     4,    -6,    -6
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -503,20 +518,20 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     4,     5,     7,     0,     0,     7,     6,     1,     2,
-       3,     8
+       0,     4,     5,    11,     0,     3,     7,     6,    11,    10,
+       1,     8,     0,    12,     7,     2,     9
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -6,    -6,    -6,     1
+      -6,    -6,    -3,    -1,    -2,    -6,     3
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     4,     5,     7
+      -1,     4,     5,     6,    12,     7,     9
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -524,32 +539,36 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-       1,     2,     6,     3,     9,    10,     8,    11
+       1,     2,     8,     3,     1,     2,    10,    11,     3,    15,
+      14,    13,    16
 };
 
 static const yytype_uint8 yycheck[] =
 {
-       4,     5,     7,     7,     4,     5,     0,     6
+       4,     5,     7,     7,     4,     5,     0,     3,     7,    12,
+      11,     8,    14
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     4,     5,     7,    10,    11,     7,    12,     0,     4,
-       5,    12
+       0,     4,     5,     7,    10,    11,    12,    14,     7,    15,
+       0,     3,    13,    15,    12,    11,    13
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,     9,    10,    10,    10,    10,    11,    12,    12
+       0,     9,    10,    10,    11,    11,    12,    13,    13,    13,
+      14,    15,    15
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     2,     2,     1,     1,     2,     0,     2
+       0,     2,     3,     1,     1,     1,     1,     0,     1,     3,
+       2,     0,     2
 };
 
 
@@ -1226,76 +1245,83 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 73 "parser.y" /* yacc.c:1645  */
+#line 88 "parser.y" /* yacc.c:1645  */
     {
-		fprintf(stderr, "Expr completed\n");
-		print((yyvsp[-1].cmd_s));
-		(yyval.cmd_s) = (yyvsp[-1].cmd_s);
+		expr_result = push_front_expr((yyvsp[-1].expr_s), (yyvsp[-2].semi_expr_s));
 		YYACCEPT;
 	}
-#line 1237 "parser.tab.c" /* yacc.c:1645  */
+#line 1254 "parser.tab.c" /* yacc.c:1645  */
     break;
 
   case 3:
-#line 80 "parser.y" /* yacc.c:1645  */
-    {
-		fprintf(stderr, "Expr completed\n");
-		print((yyvsp[-1].cmd_s));
-		(yyval.cmd_s) = (yyvsp[-1].cmd_s);
-		YYACCEPT;
-	}
-#line 1248 "parser.tab.c" /* yacc.c:1645  */
-    break;
-
-  case 4:
-#line 87 "parser.y" /* yacc.c:1645  */
-    {
-		fprintf(stderr, "Expr completed\n");
-		(yyval.cmd_s) = NULL;
-		YYACCEPT;
-	}
-#line 1258 "parser.tab.c" /* yacc.c:1645  */
-    break;
-
-  case 5:
 #line 93 "parser.y" /* yacc.c:1645  */
     {
-		fprintf(stderr, "Expr completed\n");
-		(yyval.cmd_s) = NULL;
+		expr_result = NULL;
 		YYACCEPT;
 	}
-#line 1268 "parser.tab.c" /* yacc.c:1645  */
+#line 1263 "parser.tab.c" /* yacc.c:1645  */
     break;
 
   case 6:
-#line 101 "parser.y" /* yacc.c:1645  */
+#line 104 "parser.y" /* yacc.c:1645  */
     {
-		fprintf(stderr, "Cmd completed\n");
-		(yyval.cmd_s) = push_front((yyvsp[0].cmd_s), (yyvsp[-1].str));
+		struct semi_expr_s *semi_s = new_semi_expr();
+		semi_s->cmd = (yyvsp[0].cmd_s);
+		(yyval.semi_expr_s) = semi_s;
 	}
-#line 1277 "parser.tab.c" /* yacc.c:1645  */
+#line 1273 "parser.tab.c" /* yacc.c:1645  */
     break;
 
   case 7:
-#line 108 "parser.y" /* yacc.c:1645  */
+#line 112 "parser.y" /* yacc.c:1645  */
     {
-		fprintf(stderr, "ids: calling new_cmd()\n");
-		(yyval.cmd_s) = new_cmd();
+		(yyval.expr_s) = new_expr();
 	}
-#line 1286 "parser.tab.c" /* yacc.c:1645  */
+#line 1281 "parser.tab.c" /* yacc.c:1645  */
     break;
 
   case 8:
-#line 113 "parser.y" /* yacc.c:1645  */
+#line 116 "parser.y" /* yacc.c:1645  */
     {
-		fprintf(stderr, "isd: adding %s to push_front()\n", (yyvsp[-1].str));
-		(yyval.cmd_s) = push_front((yyvsp[0].cmd_s), (yyvsp[-1].str));
+		(yyval.expr_s) = new_expr();
 	}
-#line 1295 "parser.tab.c" /* yacc.c:1645  */
+#line 1289 "parser.tab.c" /* yacc.c:1645  */
+    break;
+
+  case 9:
+#line 120 "parser.y" /* yacc.c:1645  */
+    {
+		(yyval.expr_s) = push_front_expr((yyvsp[0].expr_s), (yyvsp[-1].semi_expr_s));
+	}
+#line 1297 "parser.tab.c" /* yacc.c:1645  */
+    break;
+
+  case 10:
+#line 126 "parser.y" /* yacc.c:1645  */
+    {
+		(yyval.cmd_s) = push_front_cmd((yyvsp[0].cmd_s), (yyvsp[-1].str));
+	}
+#line 1305 "parser.tab.c" /* yacc.c:1645  */
+    break;
+
+  case 11:
+#line 132 "parser.y" /* yacc.c:1645  */
+    {
+		(yyval.cmd_s) = new_cmd();
+	}
+#line 1313 "parser.tab.c" /* yacc.c:1645  */
+    break;
+
+  case 12:
+#line 136 "parser.y" /* yacc.c:1645  */
+    {
+		(yyval.cmd_s) = push_front_cmd((yyvsp[0].cmd_s), (yyvsp[-1].str));
+	}
+#line 1321 "parser.tab.c" /* yacc.c:1645  */
     break;
 
 
-#line 1299 "parser.tab.c" /* yacc.c:1645  */
+#line 1325 "parser.tab.c" /* yacc.c:1645  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1522,12 +1548,45 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 144 "parser.y" /* yacc.c:1903  */
+#line 162 "parser.y" /* yacc.c:1903  */
 
 
 void
 yyerror (char const *s)
 {
+	char *unexpected_token = NULL;
+	int desired_len = 25;
 
-  fprintf (stderr, "%s\n", s);
+	// TODO: can be redone more efficiently (smthing like literal tokens)
+
+	/* parser extended error message of bison */
+	if (strstr(s, "END_OF_LINE") - s == desired_len) {
+		unexpected_token = "\\n";
+	}
+	else if (strstr(s, "END_OF_FILE") - s == desired_len) {
+		unexpected_token = "\\0";
+	}
+	else if (strstr(s, "SEMICOLON") - s == desired_len) {
+		unexpected_token = ";";
+	}
+	else if (strstr(s, "ID") - s == desired_len) {
+		unexpected_token = "ID";
+	}
+	else if (strstr(s, "REDIRECT_SGN") - s == desired_len) {
+		unexpected_token = "REDIRECT_SGN";
+	}
+
+	if (unexpected_token) {
+		fprintf (stderr, "error:%d: syntax error near unexpected token '%s'\n",
+			line_num, unexpected_token);
+	}
+	else {
+		/* Error from lexical analysis => unsupported character */
+		fprintf (stderr, "error:%d: lexical error near unsupported char '%s'\n",
+			line_num, s);
+	}
+
+	/* Stop the execution on error and set propper return value */
+	error_occured = 1;
+	return_val = 254;
 }

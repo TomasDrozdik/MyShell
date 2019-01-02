@@ -1,15 +1,15 @@
-.PHONY: cstyle all clean cwd
+.PHONY: cstyle all clean
 
 CC=cc
-CFLAGS=-Wall -Wshadow -Wpointer-arith -Wcast-qual \
+C_STD=c99
+CFLAGS=-Wall -std=$(C_STD) -Wshadow -Wpointer-arith -Wcast-qual \
 	-Wstrict-prototypes -g
 OUT_FOLDER=../build
 
-TARGETS= parser.tab.c parser.tab.h lex.yy.c myshell
-OBJ_FILES= main.o parser_structs.o reader.o
+TARGETS= parser.tab.c parser.tab.h lex.yy.c mysh
+OBJ_FILES= main.o parser_structs.o reader.o caller.o
 
-
-all: cwd myshell
+all: mysh
 
 parser.tab.c: parser.y
 	bison -d parser.y
@@ -22,7 +22,7 @@ lex.yy.c: scanner.lex parser.tab.h
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
 
-myshell: parser.tab.c lex.yy.c $(OBJ_FILES)
+mysh: parser.tab.c lex.yy.c $(OBJ_FILES)
 	$(CC) -o $@ $^ -lfl -lreadline
 
 clean:

@@ -27,6 +27,7 @@
 #endif
 
 extern void yyerror(char const *);
+extern int line_num;
 
 %}
 
@@ -43,9 +44,12 @@ ID			[^ \r\t\n<>|;#$]+
 
 <COMMENT>[^\n]+ /* ignore comments */
 
-<COMMENT><<EOF>>	{
-						BEGIN(INITIAL);
-					}
+<COMMENT><<EOF>> { BEGIN(INITIAL); }
+
+<COMMENT>\n	{
+				++line_num;
+				BEGIN(INITIAL);
+			}
 
 ";"	{ return SEMICOLON;	}
 
@@ -71,10 +75,16 @@ ID			[^ \r\t\n<>|;#$]+
 			return ID;
 		}
 
-\n	{ return END_OF_LINE; }
+\n	{
+		++line_num;
+		return END_OF_LINE;
+	}
 
 <<EOF>>	{ return END_OF_FILE; }
 
-.	{ yyerror("Mystery character"); }
+.	{
+		char mystery_char[2] = { yytext[0], '\0' };
+		yyerror(mystery_char);
+	}
 
 %%

@@ -1,10 +1,11 @@
 /* parser.y */
 
 %start expr
+%define parse.error verbose
 
 %code requires
 {
-// Include used structs
+/* Include user structs for %union types */
 #ifndef PARSER_STRUCTS_H
 	#define PARSER_STRUCTS_H
 	#include "parser_structs.h"
@@ -20,12 +21,24 @@
 	#define STDIO_H
 	#include <stdio.h>
 #endif
+#ifndef STRING_H
+	#define STRING_H
+	#include <string.h>
+#endif
 
-// Forward decl
+/* Forward decl */
 void yyerror(char const *);
 
-// Let bison know of lex
+/* let bison know of lex */
 extern int yylex();
+
+/* way of passing AST result out of bison */
+extern struct expr_s *expr_result;
+
+/* for yyerror */
+extern int line_num;
+extern int error_occured;
+extern int return_val;
 
 %}
 
@@ -33,6 +46,8 @@ extern int yylex();
 	char *str;
 	redirect_sgn red_sgn;
 
+	struct expr_s *expr_s;
+	struct semi_expr_s *semi_expr_s;
 	struct cmd_s *cmd_s;
 }
 
@@ -45,6 +60,7 @@ extern int yylex();
 %token<red_sgn> REDIRECT_SGN
 
 /* declare types of used nonterminals */
+//TODO: PHASE2
 /*
 %type<expr_s> expr
 %type<semi_expr_s> semi_expr
@@ -62,67 +78,67 @@ extern int yylex();
 %type<TODO: head of the list> pipe_exprs
 */
 
-%type<cmd_s> expr
-%type<cmd_s> cmd
-%type<cmd_s> ids
+%type<expr_s> semi_exprs
+%type<semi_expr_s> semi_expr
+%type<cmd_s> cmd ids
 
 %%
 
-/* DEBUG */
-expr: 	cmd END_OF_FILE
+expr:	semi_expr semi_exprs end
 	{
-		fprintf(stderr, "Expr completed\n");
-		print($1);
-		$$ = $1;
+		expr_result = push_front_expr($2, $1);
 		YYACCEPT;
 	}
-	|	cmd END_OF_LINE
+	|	end
 	{
-		fprintf(stderr, "Expr completed\n");
-		print($1);
-		$$ = $1;
+		expr_result = NULL;
 		YYACCEPT;
 	}
-	|	END_OF_FILE
-	{
-		fprintf(stderr, "Expr completed\n");
-		$$ = NULL;
-		YYACCEPT;
-	}
+	;
+
+end:	END_OF_FILE
 	|	END_OF_LINE
+	;
+
+semi_expr: cmd
 	{
-		fprintf(stderr, "Expr completed\n");
-		$$ = NULL;
-		YYACCEPT;
+		struct semi_expr_s *semi_s = new_semi_expr();
+		semi_s->cmd = $1;
+		$$ = semi_s;
+	}
+	;
+
+semi_exprs: /* nothing */
+	{
+		$$ = new_expr();
+	}
+	|	SEMICOLON
+	{
+		$$ = new_expr();
+	}
+	|	SEMICOLON semi_expr semi_exprs
+	{
+		$$ = push_front_expr($3, $2);
 	}
 	;
 
 cmd: ID ids
 	{
-		fprintf(stderr, "Cmd completed\n");
-		$$ = push_front($2, $1);
+		$$ = push_front_cmd($2, $1);
 	}
 	;
 
 ids: /* nothing */
 	{
-		fprintf(stderr, "ids: calling new_cmd()\n");
 		$$ = new_cmd();
 	}
 	| ID ids
 	{
-		fprintf(stderr, "isd: adding %s to push_front()\n", $1);
-		$$ = push_front($2, $1);
+		$$ = push_front_cmd($2, $1);
 	}
 	;
 
-semi_expr: pipe_expr pipe_exprs
-	;
-
-semi_exprs: /* nothing */
-	|	semi_expr
-	|	semi_expr SEMICOLON semi_exprs
-	;
+/* UNUSED FOR PHASE1 -----------------------------------------------*/
 
 pipe_expr: redirect_expr
 	;
@@ -141,11 +157,46 @@ redirections: /* nothing */
 	|	redirection redirections
 	;
 
+/* -----------------------------------------------------------------*/
+
 %%
 
 void
 yyerror (char const *s)
 {
+	char *unexpected_token = NULL;
+	int desired_len = 25;
 
-  fprintf (stderr, "%s\n", s);
+	// TODO: can be redone more efficiently (smthing like literal tokens)
+
+	/* parser extended error message of bison */
+	if (strstr(s, "END_OF_LINE") - s == desired_len) {
+		unexpected_token = "\\n";
+	}
+	else if (strstr(s, "END_OF_FILE") - s == desired_len) {
+		unexpected_token = "\\0";
+	}
+	else if (strstr(s, "SEMICOLON") - s == desired_len) {
+		unexpected_token = ";";
+	}
+	else if (strstr(s, "ID") - s == desired_len) {
+		unexpected_token = "ID";
+	}
+	else if (strstr(s, "REDIRECT_SGN") - s == desired_len) {
+		unexpected_token = "REDIRECT_SGN";
+	}
+
+	if (unexpected_token) {
+		fprintf (stderr, "error:%d: syntax error near unexpected token '%s'\n",
+			line_num, unexpected_token);
+	}
+	else {
+		/* Error from lexical analysis => unsupported character */
+		fprintf (stderr, "error:%d: lexical error near unsupported char '%s'\n",
+			line_num, s);
+	}
+
+	/* Stop the execution on error and set propper return value */
+	error_occured = 1;
+	return_val = 254;
 }

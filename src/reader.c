@@ -59,17 +59,17 @@ readln(struct input_s *in)
 	switch (in->t) {
 	case CONSOLE_IN:
 		line = readline("mysh$ ");
+		if (strcmp(line, "") != 0) {
+			add_history(line);
+		}
 		break;
 	case STRING_IN:
 		line = in->str;
 		in->t = INVALID;
 		break;
 	case FILE_IN:
-		if (getline(&line, &n, in->fd) == -1 ||
-			line[0] == '\n') {
-
+		if (getline(&line, &n, in->fd) == -1) {
 			/* In case of failiure free the buffer see getline(3) */
-			/* At the EOF getline(3) returns \n so exclude it. */
 			free(line);
 			line = NULL;
 		}
