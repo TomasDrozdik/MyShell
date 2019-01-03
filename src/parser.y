@@ -1,6 +1,7 @@
 /* parser.y */
 
 %start expr
+
 %define parse.error verbose
 
 %code requires
@@ -50,8 +51,6 @@ extern int return_val;
 	struct semi_expr_s *semi_expr_s;
 	struct cmd_s *cmd_s;
 }
-
-%destructor { free(s)}
 
 /* declare tokens */
 %token SEMICOLON

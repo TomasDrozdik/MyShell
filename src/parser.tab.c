@@ -65,19 +65,19 @@
 
 
 /* First part of user prologue.  */
-#line 15 "parser.y" /* yacc.c:338  */
+#line 16 "parser.y" /* yacc.c:338  */
 
 #ifndef STDIO_H
-	#define STDIO_H
-	#include <stdio.h>
+#define	STDIO_H
+#include <stdio.h>
 #endif
 #ifndef STDIO_H
-	#define STDIO_H
-	#include <stdio.h>
+#define	STDIO_H
+#include <stdio.h>
 #endif
 #ifndef STRING_H
-	#define STRING_H
-	#include <string.h>
+#define	STRING_H
+#include <string.h>
 #endif
 
 /* Forward decl */
@@ -128,12 +128,12 @@ extern int return_val;
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 7 "parser.y" /* yacc.c:353  */
+#line 8 "parser.y" /* yacc.c:353  */
 
 /* Include user structs for %union types */
 #ifndef PARSER_STRUCTS_H
-	#define PARSER_STRUCTS_H
-	#include "parser_structs.h"
+#define	PARSER_STRUCTS_H
+#include "parser_structs.h"
 #endif
 
 #line 140 "parser.tab.c" /* yacc.c:353  */
@@ -157,7 +157,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 45 "parser.y" /* yacc.c:353  */
+#line 46 "parser.y" /* yacc.c:353  */
 
 	char *str;
 	redirect_sgn red_sgn;
@@ -470,8 +470,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    87,    87,    92,    99,   100,   103,   112,   115,   119,
-     125,   132,   135
+       0,    86,    86,    91,    98,    99,   102,   111,   114,   118,
+     124,   131,   134
 };
 #endif
 
@@ -1245,7 +1245,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 88 "parser.y" /* yacc.c:1645  */
+#line 87 "parser.y" /* yacc.c:1645  */
     {
 		expr_result = push_front_expr((yyvsp[-1].expr_s), (yyvsp[-2].semi_expr_s));
 		YYACCEPT;
@@ -1254,7 +1254,7 @@ yyreduce:
     break;
 
   case 3:
-#line 93 "parser.y" /* yacc.c:1645  */
+#line 92 "parser.y" /* yacc.c:1645  */
     {
 		expr_result = NULL;
 		YYACCEPT;
@@ -1263,7 +1263,7 @@ yyreduce:
     break;
 
   case 6:
-#line 104 "parser.y" /* yacc.c:1645  */
+#line 103 "parser.y" /* yacc.c:1645  */
     {
 		struct semi_expr_s *semi_s = new_semi_expr();
 		semi_s->cmd = (yyvsp[0].cmd_s);
@@ -1273,7 +1273,7 @@ yyreduce:
     break;
 
   case 7:
-#line 112 "parser.y" /* yacc.c:1645  */
+#line 111 "parser.y" /* yacc.c:1645  */
     {
 		(yyval.expr_s) = new_expr();
 	}
@@ -1281,7 +1281,7 @@ yyreduce:
     break;
 
   case 8:
-#line 116 "parser.y" /* yacc.c:1645  */
+#line 115 "parser.y" /* yacc.c:1645  */
     {
 		(yyval.expr_s) = new_expr();
 	}
@@ -1289,7 +1289,7 @@ yyreduce:
     break;
 
   case 9:
-#line 120 "parser.y" /* yacc.c:1645  */
+#line 119 "parser.y" /* yacc.c:1645  */
     {
 		(yyval.expr_s) = push_front_expr((yyvsp[0].expr_s), (yyvsp[-1].semi_expr_s));
 	}
@@ -1297,7 +1297,7 @@ yyreduce:
     break;
 
   case 10:
-#line 126 "parser.y" /* yacc.c:1645  */
+#line 125 "parser.y" /* yacc.c:1645  */
     {
 		(yyval.cmd_s) = push_front_cmd((yyvsp[0].cmd_s), (yyvsp[-1].str));
 	}
@@ -1305,7 +1305,7 @@ yyreduce:
     break;
 
   case 11:
-#line 132 "parser.y" /* yacc.c:1645  */
+#line 131 "parser.y" /* yacc.c:1645  */
     {
 		(yyval.cmd_s) = new_cmd();
 	}
@@ -1313,7 +1313,7 @@ yyreduce:
     break;
 
   case 12:
-#line 136 "parser.y" /* yacc.c:1645  */
+#line 135 "parser.y" /* yacc.c:1645  */
     {
 		(yyval.cmd_s) = push_front_cmd((yyvsp[0].cmd_s), (yyvsp[-1].str));
 	}
@@ -1548,11 +1548,11 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 162 "parser.y" /* yacc.c:1903  */
+#line 161 "parser.y" /* yacc.c:1903  */
 
 
 void
-yyerror (char const *s)
+yyerror(char const *s)
 {
 	char *unexpected_token = NULL;
 	int desired_len = 25;
@@ -1567,28 +1567,23 @@ yyerror (char const *s)
 	/* parser extended error message of bison */
 	if (strstr(s, "END_OF_LINE") - s == desired_len) {
 		unexpected_token = "\\n";
-	}
-	else if (strstr(s, "END_OF_FILE") - s == desired_len) {
+	} else if (strstr(s, "END_OF_FILE") - s == desired_len) {
 		unexpected_token = "\\0";
-	}
-	else if (strstr(s, "SEMICOLON") - s == desired_len) {
+	} else if (strstr(s, "SEMICOLON") - s == desired_len) {
 		unexpected_token = ";";
-	}
-	else if (strstr(s, "ID") - s == desired_len) {
+	} else if (strstr(s, "ID") - s == desired_len) {
 		unexpected_token = "ID";
-	}
-	else if (strstr(s, "REDIRECT_SGN") - s == desired_len) {
+	} else if (strstr(s, "REDIRECT_SGN") - s == desired_len) {
 		unexpected_token = "REDIRECT_SGN";
 	}
 
 	if (unexpected_token) {
-		fprintf (stderr, "error:%d: syntax error near unexpected token '%s'\n",
+		fprintf(stderr, "error:%d: syntax error near unexpected token '%s'\n",
 			line_num, unexpected_token);
 		return_val = 254;
-	}
-	else {
+	} else {
 		/* Error from lexical analysis => unsupported character */
-		fprintf (stderr, "error:%d: lexical error near unsupported char '%s'\n",
+		fprintf(stderr, "error:%d: lexical error near unsupported char '%s'\n",
 			line_num, s);
 		return_val = 253;
 	}

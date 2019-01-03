@@ -43,12 +43,12 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 7 "parser.y" /* yacc.c:1906  */
+#line 8 "parser.y" /* yacc.c:1906  */
 
 /* Include user structs for %union types */
 #ifndef PARSER_STRUCTS_H
-	#define PARSER_STRUCTS_H
-	#include "parser_structs.h"
+#define	PARSER_STRUCTS_H
+#include "parser_structs.h"
 #endif
 
 #line 55 "parser.tab.h" /* yacc.c:1906  */
@@ -72,7 +72,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 45 "parser.y" /* yacc.c:1906  */
+#line 46 "parser.y" /* yacc.c:1906  */
 
 	char *str;
 	redirect_sgn red_sgn;

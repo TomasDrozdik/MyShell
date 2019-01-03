@@ -34,21 +34,21 @@
 #endif
 
 extern int return_val;
-extern int child_pid;
 extern int custom_exit;
 extern int sigint_handled;
-
-/*
- * Help functions declarations
- */
 
 void
 process_semi_expr(struct semi_expr_s *);
 
-/* Returns: pid of called process -1 if custom cmd was called. */
+/*
+ * RETURNS: pid of called process -1 if custom cmd was called
+ */
 int
 process_cmd(struct cmd_s *);
 
+/*
+ * RETURNS: finename from str stripping path off
+ */
 char *
 strip_path(char *str);
 
@@ -60,8 +60,11 @@ void
 call(struct expr_s *expr)
 {
 	struct semi_expr_entry *ent;
+
 	STAILQ_FOREACH(ent, &expr->semi_exprs, entries) {
+
 		process_semi_expr(ent->item);
+
 		if (sigint_handled == 1) {
 			break;
 		}
@@ -69,22 +72,37 @@ call(struct expr_s *expr)
 }
 
 /*
- * Help functions definitions
+ * Other function definitions
  */
 
 void
 process_semi_expr(struct semi_expr_s *semi_expr)
 {
-	int stat_val;
+	int pid, stat_val;
 
-	if (process_cmd(semi_expr->cmd) != -1) {
-		waitpid(child_pid, &stat_val, 0);
-		return_val = WEXITSTATUS(stat_val);
+	/* -1 implies internal cmd */
+	if ((pid = process_cmd(semi_expr->cmd) != -1)) {
+
+		waitpid(pid, &stat_val, 0);
+
+		/* Properly set return value. */
+		if (WIFEXITED(stat_val)) {
+
+			return_val = WEXITSTATUS(stat_val);
+
+		} else if (WIFSIGNALED(stat_val)) {
+
+			fprintf(stderr, "Killed by signal %d\n", WTERMSIG(stat_val));
+
+			return_val = 128 + WTERMSIG(stat_val);
+
+		} else {
+
+			fprintf(stderr, "Unkonwn return value.\n");
+
+			return_val = -1;
+		}
 	}
-
-	/* Reset the child_pid to notify sigint_handler. */
-	child_pid = -1;
-
 }
 
 int
@@ -102,37 +120,46 @@ process_cmd(struct cmd_s *cmd)
 
 	/* Process custom functions. */
 	if (strcmp(argv[1], "exit") == 0) {
+
 		custom_exit = 1;
 		free(argv);
+
 		return (-1);
+
 	} else if (strcmp(argv[1], "cd") == 0) {
+
 		return_val = cd(cmd->argc, argv);
 		free(argv);
+
 		return (-1);
 	}
 
 	/* Add NULL termination for exec call */
 	argv[i] = NULL;
 
-	// TODO: to stick to standard argv[0] should be stripped of path
+	/* To stick to standard argv[0] should be stripped of path. */
 	argv[0] = malloc(strlen(argv[1]) + 1);
 	memcpy(argv[0], argv[1], strlen(argv[1]) + 1);
 	argv[1] = strip_path(argv[1]);
 
 	switch (pid = fork()) {
 	case -1:
+
 		err(1, "fork");
+
 	case 0:
-		setdir();
+
 		execvp(argv[0], argv + 1);
 		err(127, argv[0]);
+
 	default:
+
 		/* Clean up */
-		child_pid = pid;
 		free(argv[0]);
 		free(argv);
-		return (pid);
 	}
+
+	return (pid);
 }
 
 char *

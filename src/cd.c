@@ -32,47 +32,61 @@ setdir(void)
 		return (1);
 	}
 
+	fprintf(stderr, "Child cwd to %s\n", getenv("PWD"));
+
 	return (0);
 }
 
 int
 cd(int argc, char **argv)
 {
-	char *cwd;
+	char *dir = NULL;
 
 	if (argc == 1) {
-		if (chdir(getenv("HOME")) == -1) {
-			warn("chdir");
-			return (1);
-		} else {
-			setenv("OLDPWD", getenv("PWD"), 1);
-			setenv("PDW", "HOME", 1);
-		}
+
+		dir = getenv("HOME");
+
 	} else if (argc == 2) {
+
 		if (strcmp(argv[1], "-") == 0) {
-			if (chdir("..") == -1) {
-				warn("chdir");
-				return (1);
-			} else {
-				cwd = strdup(getenv("PWD"));
-				setenv("PWD", getenv("OLDPWD"), 1);
-				setenv("OLDPWD", cwd, 1);
-				free(cwd);
-			}
+
+			dir = getenv("OLDPWD");
+
 		} else {
-			if (chdir(argv[1]) == -1) {
-				warn("chdir");
-				return (1);
-			} else {
-				setenv("OLDPWD", getenv("PWD"), 1);
-				cwd = get_current_dir_name();
-				setenv("PWD", cwd, 1);
-				free(cwd);
-			}
+
+			dir = argv[1];
 		}
+
 	} else {
+
 		warn("Usage ./cd [-|[directory]]");
+		return (1);
 	}
+
+	if (chdir(dir) == -1) {
+
+		warn("chdir");
+		return (2);
+
+	} else {
+
+		/* Get full path of current dir. */
+		dir = get_current_dir_name();
+
+		if (setenv("OLDPWD", getenv("PWD"), 1) == -1) {
+
+			warn("setenv:");
+			return (3);
+		}
+
+		if (setenv("PWD", dir, 1) == -1) {
+
+			warn("setenv:");
+			return (3);
+		}
+	}
+
+	fprintf(stderr, "cd: PWD:%s OLDPWD:%s", getenv("PWD"), getenv("OLDPWD"));
 
 	return (0);
 }
