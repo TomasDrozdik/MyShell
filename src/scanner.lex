@@ -4,6 +4,7 @@
 %option noyywrap
 
 %{
+
 #ifndef STRING_H
 	#define STRING_H
 	#include <string.h>
@@ -71,7 +72,8 @@ ID			[^ \r\t\n<>|;#$]+
 		}
 
 {ID}	{
-			yylval.str = strdup(yytext);
+			yylval.str = malloc(yyleng + 1);
+			memcpy(yylval.str, yytext, yyleng + 1);
 			return ID;
 		}
 

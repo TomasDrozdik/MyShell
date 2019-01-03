@@ -30,7 +30,7 @@
 void yyerror(char const *);
 
 /* let bison know of lex */
-extern int yylex();
+extern int yylex(void);
 
 /* way of passing AST result out of bison */
 extern struct expr_s *expr_result;
@@ -169,6 +169,11 @@ yyerror (char const *s)
 
 	// TODO: can be redone more efficiently (smthing like literal tokens)
 
+	if (!s) {
+		/* Call from signal handler just stop the execution */
+		return;
+	}
+
 	/* parser extended error message of bison */
 	if (strstr(s, "END_OF_LINE") - s == desired_len) {
 		unexpected_token = "\\n";
@@ -189,14 +194,15 @@ yyerror (char const *s)
 	if (unexpected_token) {
 		fprintf (stderr, "error:%d: syntax error near unexpected token '%s'\n",
 			line_num, unexpected_token);
+		return_val = 254;
 	}
 	else {
 		/* Error from lexical analysis => unsupported character */
 		fprintf (stderr, "error:%d: lexical error near unsupported char '%s'\n",
 			line_num, s);
+		return_val = 253;
 	}
 
-	/* Stop the execution on error and set propper return value */
+	/* Stop the execution on error. */
 	error_occured = 1;
-	return_val = 254;
 }

@@ -7,7 +7,7 @@ CFLAGS=-Wall -std=$(C_STD) -Wshadow -Wpointer-arith -Wcast-qual \
 OUT_FOLDER=../build
 
 TARGETS= parser.tab.c parser.tab.h lex.yy.c mysh
-OBJ_FILES= main.o parser_structs.o reader.o caller.o
+OBJ_FILES= main.o parser_structs.o reader.o caller.o cd.o
 
 all: mysh
 

@@ -18,7 +18,17 @@
 #endif
 
 /*
- * caller.h functions definitions
+ * Help functions declarations.
+ */
+
+void
+free_semi_expr(struct semi_expr_s *cmd);
+
+void
+free_cmd(struct cmd_s *cmd);
+
+/*
+ * parser_structs.h functions definitions
  */
 
 struct expr_s *
@@ -128,5 +138,40 @@ print_expr(struct expr_s *obj)
 void
 free_expr(struct expr_s *expr)
 {
+	struct semi_expr_entry *ent;
+	semi_expr_slist_t *head = &expr->semi_exprs;
 
+	while (!STAILQ_EMPTY(head)) {
+		ent = STAILQ_FIRST(head);
+		STAILQ_REMOVE_HEAD(head, entries);
+		free_semi_expr(ent->item);
+		free(ent);
+	}
+	free(expr);
+}
+
+/*
+ * Definitions of help functions.
+ */
+
+void
+free_semi_expr(struct semi_expr_s *semi)
+{
+	free_cmd(semi->cmd);
+	free(semi);
+}
+
+void
+free_cmd(struct cmd_s *cmd)
+{
+	struct arg_entry *ent;
+	arg_slist_t *head = &cmd->argv;
+
+	while (!STAILQ_EMPTY(head)) {
+		ent = STAILQ_FIRST(head);
+		STAILQ_REMOVE_HEAD(head, entries);
+		free(ent->arg);
+		free(ent);
+	}
+	free(cmd);
 }

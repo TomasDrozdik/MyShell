@@ -24,6 +24,17 @@
 	#include <stdlib.h>
 #endif
 
+/*
+ * Declaration of help functions.
+ */
+
+char *
+set_prompt(char *prompt);
+
+/*
+ * Definition of reader.h functions.
+ */
+
 struct input_s *
 input_default_init(void)
 {
@@ -54,11 +65,17 @@ char *
 readln(struct input_s *in)
 {
 	char *line = NULL;
+	char *prompt = NULL;
 	size_t n = 0;
 
 	switch (in->t) {
 	case CONSOLE_IN:
-		line = readline("mysh$ ");
+		prompt = set_prompt(prompt);
+		line = readline(prompt);
+		free(prompt);
+		if (!line) {
+			break;
+		}
 		if (strcmp(line, "") != 0) {
 			add_history(line);
 		}
@@ -82,4 +99,23 @@ readln(struct input_s *in)
 	}
 
 	return line;
+}
+
+/*
+ * Defintion of help functions.
+ */
+
+char *
+set_prompt(char *prompt)
+{
+	char *header = "mysh:";
+	char *cwd = getenv("PWD");
+	char *footer = "$ ";
+
+	prompt = realloc(prompt, strlen(header) + strlen(cwd) + strlen(footer) + 1);
+	prompt = strcpy(prompt, header);
+	strcat(prompt, cwd);
+	strcat(prompt, footer);
+
+	return prompt;
 }
