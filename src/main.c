@@ -1,54 +1,54 @@
 /* main.c */
 
-#define _XOPEN_SOURCE   700
+#define	_XOPEN_SOURCE	700
 
 #ifndef ERR_H
-	#define ERR_H
-	#include <err.h>
+#define	ERR_H
+#include <err.h>
 #endif
 #ifndef ERRNO_H
-	#define ERRNO_H
-	#include <errno.h>
+#define	ERRNO_H
+#include <errno.h>
 #endif
 #ifndef FCNTL_H
-	#define FCNTL_H
-	#include <fcntl.h>
+#define	FCNTL_H
+#include <fcntl.h>
 #endif
 #ifndef GETOPT_H
-	#define GETOPT_H
-	#include <getopt.h>
+#define	GETOPT_H
+#include <getopt.h>
 #endif
 #ifndef PARSER_STRUCTS_H
-	#define PARSER_STRUCTS_H
-	#include "parser_structs.h"
+#define	PARSER_STRUCTS_H
+#include "parser_structs.h"
 #endif
 #ifndef READER_H
-	#define READER_H
-	#include "reader.h"
+#define	READER_H
+#include "reader.h"
 #endif
 #ifndef SIGNAL_H
-	#define SIGNAL_H
-	#include <signal.h>
+#define	SIGNAL_H
+#include <signal.h>
 #endif
 #ifndef STDIO_H
-	#define STDIO_H
-	#include <stdio.h>
+#define	STDIO_H
+#include <stdio.h>
 #endif
 #ifndef STDLIB_H
-	#define STDLIB_H
-	#include <stdlib.h>
+#define	STDLIB_H
+#include <stdlib.h>
 #endif
 #ifndef SYS_STAT_H
-	#define SYS_STAT_H
-	#include <sys/stat.h>
+#define	SYS_STAT_H
+#include <sys/stat.h>
 #endif
 #ifndef UNISTD_H
-	#define UNISTD_H
-	#include <unistd.h>
+#define	UNISTD_H
+#include <unistd.h>
 #endif
 #ifndef CALLER_H
-	#define CALLER_H
-	#include "caller.h"
+#define	CALLER_H
+#include "caller.h"
 #endif
 
 /* Declare bison extern functions. */
@@ -124,8 +124,7 @@ main(int argc, char **argv)
 				err(1, "open");
 			}
 			input = input_file_init(f);
-		}
-		else {
+		} else {
 			/* Default init */
 			input = input_default_init();
 		}
@@ -133,7 +132,6 @@ main(int argc, char **argv)
 
 	while ((line = readln(input)) != NULL) {
 		yy_scan_string(line);
-		//TODO something like yy_destroy should maybe go here.
 		yyparse();
 		yylex_destroy();
 		free(line);
@@ -178,8 +176,7 @@ sigint_handler(int sig)
 	 */
 	if (child_pid == -1) {
 		yyerror(NULL);
-	}
-	else {
+	} else {
 		/* Send signal to currently forked process */
 		errno = 0;
 		if (kill(child_pid, SIGINT) == -1 && errno == ESRCH) {

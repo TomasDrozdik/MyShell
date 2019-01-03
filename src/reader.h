@@ -1,12 +1,12 @@
 /* reader.h */
 
 #ifndef STDDEF_H
-	#define STDDEF_H
-	#include <stddef.h>
+#define	STDDEF_H
+#include <stddef.h>
 #endif
 #ifndef STDIO_H
-	#define STDIO_H
-	#include <stdio.h>
+#define	STDIO_H
+#include <stdio.h>
 #endif
 
 enum input_type {
@@ -26,10 +26,10 @@ struct input_s *
 input_default_init(void);
 
 struct input_s *
-input_str_init(char*);
+input_str_init(char *);
 
 struct input_s *
-input_file_init(FILE*);
+input_file_init(FILE *);
 
 char *
 readln(struct input_s *);

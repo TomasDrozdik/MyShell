@@ -7,23 +7,23 @@
 {
 /* Include user structs for %union types */
 #ifndef PARSER_STRUCTS_H
-	#define PARSER_STRUCTS_H
-	#include "parser_structs.h"
+#define	PARSER_STRUCTS_H
+#include "parser_structs.h"
 #endif
 }
 
 %{
 #ifndef STDIO_H
-	#define STDIO_H
-	#include <stdio.h>
+#define	STDIO_H
+#include <stdio.h>
 #endif
 #ifndef STDIO_H
-	#define STDIO_H
-	#include <stdio.h>
+#define	STDIO_H
+#include <stdio.h>
 #endif
 #ifndef STRING_H
-	#define STRING_H
-	#include <string.h>
+#define	STRING_H
+#include <string.h>
 #endif
 
 /* Forward decl */
@@ -51,6 +51,8 @@ extern int return_val;
 	struct cmd_s *cmd_s;
 }
 
+%destructor { free(s)}
+
 /* declare tokens */
 %token SEMICOLON
 %token END_OF_FILE
@@ -60,23 +62,21 @@ extern int return_val;
 %token<red_sgn> REDIRECT_SGN
 
 /* declare types of used nonterminals */
-//TODO: PHASE2
-/*
-%type<expr_s> expr
-%type<semi_expr_s> semi_expr
-%type<pipe_expr_s> pipe_expr
-%type<redirect_expr_s> redirect_expr
-%type<redirection_s> redirection
-%type<cmd_s> cmd
-*/
+// TODO: PHASE2
 
-/*
-%type<TODO: head of the list> semi_exprs
-%type<TODO: head of the list> pipe_exprs
-%type<TODO: head of the list> redirection
-%type<TODO: head of the list> pipe_exprs
-%type<TODO: head of the list> pipe_exprs
-*/
+// %type<expr_s> expr
+// %type<semi_expr_s> semi_expr
+// %type<pipe_expr_s> pipe_expr
+// %type<redirect_expr_s> redirect_expr
+// %type<redirection_s> redirection
+// %type<cmd_s> cmd
+
+// %type<TODO: head of the list> semi_exprs
+// %type<TODO: head of the list> pipe_exprs
+// %type<TODO: head of the list> redirection
+// %type<TODO: head of the list> pipe_exprs
+// %type<TODO: head of the list> pipe_exprs
+
 
 %type<expr_s> semi_exprs
 %type<semi_expr_s> semi_expr
@@ -138,7 +138,7 @@ ids: /* nothing */
 	}
 	;
 
-/* UNUSED FOR PHASE1 -----------------------------------------------*/
+/* UNUSED FOR PHASE1 ----------------------------------------------- */
 
 pipe_expr: redirect_expr
 	;
@@ -157,12 +157,12 @@ redirections: /* nothing */
 	|	redirection redirections
 	;
 
-/* -----------------------------------------------------------------*/
+/* ----------------------------------------------------------------- */
 
 %%
 
 void
-yyerror (char const *s)
+yyerror(char const *s)
 {
 	char *unexpected_token = NULL;
 	int desired_len = 25;
@@ -177,28 +177,23 @@ yyerror (char const *s)
 	/* parser extended error message of bison */
 	if (strstr(s, "END_OF_LINE") - s == desired_len) {
 		unexpected_token = "\\n";
-	}
-	else if (strstr(s, "END_OF_FILE") - s == desired_len) {
+	} else if (strstr(s, "END_OF_FILE") - s == desired_len) {
 		unexpected_token = "\\0";
-	}
-	else if (strstr(s, "SEMICOLON") - s == desired_len) {
+	} else if (strstr(s, "SEMICOLON") - s == desired_len) {
 		unexpected_token = ";";
-	}
-	else if (strstr(s, "ID") - s == desired_len) {
+	} else if (strstr(s, "ID") - s == desired_len) {
 		unexpected_token = "ID";
-	}
-	else if (strstr(s, "REDIRECT_SGN") - s == desired_len) {
+	} else if (strstr(s, "REDIRECT_SGN") - s == desired_len) {
 		unexpected_token = "REDIRECT_SGN";
 	}
 
 	if (unexpected_token) {
-		fprintf (stderr, "error:%d: syntax error near unexpected token '%s'\n",
+		fprintf(stderr, "error:%d: syntax error near unexpected token '%s'\n",
 			line_num, unexpected_token);
 		return_val = 254;
-	}
-	else {
+	} else {
 		/* Error from lexical analysis => unsupported character */
-		fprintf (stderr, "error:%d: lexical error near unsupported char '%s'\n",
+		fprintf(stderr, "error:%d: lexical error near unsupported char '%s'\n",
 			line_num, s);
 		return_val = 253;
 	}

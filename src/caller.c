@@ -1,36 +1,36 @@
 /* caller.c */
 
 #ifndef ERR_H
-	#define ERR_H
-	#include <err.h>
+#define	ERR_H
+#include <err.h>
 #endif
 #ifndef CALLER_H
-	#define CALLER_H
-	#include "caller.h"
+#define	CALLER_H
+#include "caller.h"
 #endif
 #ifndef CD_H
-	#define CD_H
-	#include "cd.h"
+#define	CD_H
+#include "cd.h"
 #endif
 #ifndef UNISTD_H
-	#define UNISTD_H
-	#include <unistd.h>
+#define	UNISTD_H
+#include <unistd.h>
 #endif
 #ifndef STDIO_H
-	#define STDIO_H
-	#include <stdio.h>
+#define	STDIO_H
+#include <stdio.h>
 #endif
 #ifndef STDLIB_H
-	#define STDLIB_H
-	#include <stdlib.h>
+#define	STDLIB_H
+#include <stdlib.h>
 #endif
 #ifndef STRING_H
-	#define STRING_H
-	#include <string.h>
+#define	STRING_H
+#include <string.h>
 #endif
 #ifndef SYS_WAIT_H
-	#define SYS_WAIT_H
-	#include <sys/wait.h>
+#define	SYS_WAIT_H
+#include <sys/wait.h>
 #endif
 
 extern int return_val;
@@ -105,8 +105,7 @@ process_cmd(struct cmd_s *cmd)
 		custom_exit = 1;
 		free(argv);
 		return (-1);
-	}
-	else if (strcmp(argv[1], "cd") == 0) {
+	} else if (strcmp(argv[1], "cd") == 0) {
 		return_val = cd(cmd->argc, argv);
 		free(argv);
 		return (-1);
@@ -132,7 +131,7 @@ process_cmd(struct cmd_s *cmd)
 		child_pid = pid;
 		free(argv[0]);
 		free(argv);
-		return pid;
+		return (pid);
 	}
 }
 
@@ -143,9 +142,8 @@ strip_path(char *str)
 
 	if ((lst_occurence = strrchr(str, '/'))) {
 		fprintf(stderr, "strip_path: %s -> %s", str, lst_occurence);
-		return lst_occurence + 1;
+		return (lst_occurence + 1);
 	}
 
-	//DEBUG
-	return str;
+	return (str);
 }

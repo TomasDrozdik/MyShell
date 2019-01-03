@@ -6,8 +6,8 @@
  */
 
 #ifndef PARSER_STRUCTS_H
-	#define PARSER_STRUCTS_H
-	#include "parser_structs.h"
+#define	PARSER_STRUCTS_H
+#include "parser_structs.h"
 #endif
 
 void

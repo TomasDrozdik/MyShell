@@ -1,20 +1,20 @@
 /* parser_structs.c */
 
 #ifndef PARSER_STRUCTS_H
-	#define PARSER_STRUCTS_H
-	#include "parser_structs.h"
+#define	PARSER_STRUCTS_H
+#include "parser_structs.h"
 #endif
 #ifndef STDDEF_H
-	#define STDDEF_H
-	#include <stddef.h>
+#define	STDDEF_H
+#include <stddef.h>
 #endif
 #ifndef STDIO_H
-	#define STDIO_H
-	#include <stdio.h>
+#define	STDIO_H
+#include <stdio.h>
 #endif
 #ifndef STDLIB_H
-	#define STDLIB_H
-	#include <stdlib.h>
+#define	STDLIB_H
+#include <stdlib.h>
 #endif
 
 /*
@@ -39,7 +39,7 @@ new_expr(void)
 	res->len = 0;
 	STAILQ_INIT(&res->semi_exprs);
 
-	return res;
+	return (res);
 }
 
 struct semi_expr_s *
@@ -50,21 +50,21 @@ new_semi_expr(void)
 
 	res->cmd = NULL;
 
-	return res;
+	return (res);
 }
 
 struct pipe_expr_s *
 new_pipe_expr(void)
 {
 	// TODO: PHASE2
-	return NULL;
+	return (NULL);
 }
 
 struct redirect_expr_s *
 new_redirect_expr(void)
 {
 	// TODO: PHASE2
-	return NULL;
+	return (NULL);
 }
 
 struct cmd_s *
@@ -75,14 +75,14 @@ new_cmd(void)
 	res->argc = 0;
 	STAILQ_INIT(&res->argv);
 
-	return res;
+	return (res);
 }
 
 struct redirection_s *
 new_redirection(redirect_sgn sgn, char *fname)
 {
 	// TODO: PHASE2
-	return NULL;
+	return (NULL);
 }
 
 struct cmd_s *
@@ -94,7 +94,7 @@ push_front_cmd(struct cmd_s *obj, char *item)
 	STAILQ_INSERT_HEAD(&obj->argv, entry, entries);
 	++obj->argc;
 
-	return obj;
+	return (obj);
 }
 
 struct expr_s *
@@ -106,7 +106,7 @@ push_front_expr(struct expr_s *obj, struct semi_expr_s *item)
 	STAILQ_INSERT_HEAD(&obj->semi_exprs, entry, entries);
 	++obj->len;
 
-	return obj;
+	return (obj);
 }
 
 void

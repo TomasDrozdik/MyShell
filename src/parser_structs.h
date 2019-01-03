@@ -1,8 +1,8 @@
 /* parser_structs.h */
 
 #ifndef QUEUE_H
-	#define QUEUE_H
-	#include <sys/queue.h>
+#define	QUEUE_H
+#include <sys/queue.h>
 #endif
 
 typedef enum {
@@ -17,7 +17,7 @@ struct semi_expr_entry {
 	STAILQ_ENTRY(semi_expr_entry) entries;
 };
 
-struct pipe_expr_entry{
+struct pipe_expr_entry {
 	struct semi_expr_s *item;
 	STAILQ_ENTRY(pipe_expr_entry) entries;
 };
@@ -41,8 +41,8 @@ struct redirection_entry {
 typedef STAILQ_HEAD(semi_expr_deque, semi_expr_entry) semi_expr_slist_t;
 typedef STAILQ_HEAD(pipe_expr_deque, pipe_expr_entry) pipe_expr_slist_t;
 typedef STAILQ_HEAD(arg_deque, arg_entry) arg_slist_t;
-typedef STAILQ_HEAD(redirect_expr_deque, redirect_expr_entry)
-	redirect_expr_slist_t;
+typedef STAILQ_HEAD(redirect_expr_deque,
+	redirect_expr_entry) redirect_expr_slist_t;
 
 /* AST structures */
 struct expr_s {
@@ -51,9 +51,9 @@ struct expr_s {
 };
 
 struct semi_expr_s {
-	//pipe_expr_slist_t pipe_exprs;
-	//int len;
-	//TODO: modification for PHASE1
+	// pipe_expr_slist_t pipe_exprs;
+	// int len;
+	// TODO: modification for PHASE1
 	struct cmd_s *cmd;
 };
 
