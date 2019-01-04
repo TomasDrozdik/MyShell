@@ -107,15 +107,12 @@ push_front_cmd(struct cmd_s *obj, char *item);
 struct expr_s *
 push_front_expr(struct expr_s *obj, struct semi_expr_s *item);
 
-void
-print_cmd(struct cmd_s *obj);
-
-void
-print_expr(struct expr_s *obj);
-
-void
-print_semi(struct semi_expr_s *obj);
-
 /* Function to free the AST */
 void
 free_expr(struct expr_s *expr);
+
+void
+free_semi_expr(struct semi_expr_s *semi);
+
+void
+free_cmd(struct cmd_s *cmd);

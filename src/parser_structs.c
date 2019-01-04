@@ -110,32 +110,6 @@ push_front_expr(struct expr_s *obj, struct semi_expr_s *item)
 }
 
 void
-print_cmd(struct cmd_s *obj)
-{
-	struct arg_entry *ent;
-	printf("cmd_s: ");
-	STAILQ_FOREACH(ent, &obj->argv, entries) {
-		printf("%s ", ent->arg);
-	}
-}
-
-void
-print_semi(struct semi_expr_s *obj)
-{
-	print_cmd(obj->cmd);
-}
-
-void
-print_expr(struct expr_s *obj)
-{
-	struct semi_expr_entry *ent;
-	printf("expr_s: ");
-	STAILQ_FOREACH(ent, &obj->semi_exprs, entries) {
-		print_semi(ent->item);
-	}
-}
-
-void
 free_expr(struct expr_s *expr)
 {
 	struct semi_expr_entry *ent;

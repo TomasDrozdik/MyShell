@@ -1,0 +1,11 @@
+echo HelloWorld!
+
+# Commenting stuff: ^&*%^$)_&$@#&$
+ls . .. # comment
+
+# Error
+date;;
+
+;;
+
+echo Shouldnt execute

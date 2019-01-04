@@ -1,11 +1,15 @@
-// TODO
-.PHONY: cstyle all clean $(SUBDIRS)
-
 MAKE= make
-SUBDIRS= src
+SRC= src
+OUT= build
 
-all: $(SUBDIRS)
+all: src
 
-$(SUBDIRS) :
-	@echo "=== $@"
-	@$(MAKE) -C $@
+src:
+	$(MAKE) -C $(SRC)
+	mv $(SRC)/mysh .
+
+clean:
+	$(MAKE) clean -C $(SRC)
+	rm -rf mysh
+
+.PHONY: cstyle all clean $(SRC)

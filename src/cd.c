@@ -86,7 +86,5 @@ cd(int argc, char **argv)
 		}
 	}
 
-	fprintf(stderr, "cd: PWD:%s OLDPWD:%s", getenv("PWD"), getenv("OLDPWD"));
-
 	return (0);
 }

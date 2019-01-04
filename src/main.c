@@ -26,6 +26,11 @@
 #define	READER_H
 #include "reader.h"
 #endif
+#ifndef READLINE_H
+#define	READLINE_H
+#include <readline/readline.h>
+#include <readline/history.h>
+#endif
 #ifndef SIGNAL_H
 #define	SIGNAL_H
 #include <signal.h>
@@ -64,7 +69,7 @@ extern int optind, opterr, optopt;
 /* Result of parsing is placed here. */
 struct expr_s *expr_result = NULL;
 
-/* Used in scanner.lex and parser.y to count lines. */
+/* Used in scanner.lex and parser.y yyerror() to count lines. */
 int line_num = 1;
 
 /* Used in parser.y to track errors. */
@@ -73,11 +78,11 @@ int error_occured = 0;
 /* Used in call() and yyerror() to track return value of last executed cmd. */
 int return_val = 0;
 
-/* Used in call() if custom cmd exit is called */
+/* Used in call() if custom cmd exit is called. */
 int custom_exit = 0;
 
-/* Used in sigint handler to know that sigint occured */
-int sigint_handled = 0;
+/* Used in sigint handler to know what child to kill. */
+int child_pid = -1;
 
 /*
  * Handler for ^C just clears readline.
@@ -168,17 +173,8 @@ run(struct input_s *input)
 			/* In case of file as a input type break on first error */
 			if (error_occured && input->t == FILE_IN) {
 
-				free_expr(expr_result);
-				break;
-			}
-
-			/* If signal was caught clean up */
-			if (sigint_handled == 1) {
-
-				sigint_handled = 0;
-				free_expr(expr_result);
-
-				continue;
+				/* expr_result has been freed by bison destructor */
+				return;
 			}
 
 			if (expr_result) {
@@ -189,7 +185,7 @@ run(struct input_s *input)
 
 			if (custom_exit) {
 
-				break;
+				return;
 			}
 	}
 }
@@ -202,15 +198,20 @@ sigint_handler(int sig)
 	 * doing and create new shell line. So we'll just properly end the current
 	 * cmd.
 	 */
-	if (sig != SIGINT) {
-		warnx("Signal %d caught and handled like SIGINT", sig);
+	if (child_pid > 0) {
+
+		kill(child_pid, sig);
+		fprintf(stderr, "Killed by signal %d\n", sig);
+
 	}
+	else {
 
-	/* Reset the readline() */
-	write(1, "\n", 1);
+		/* Reset the readline() */
+		write(1, "\n", 1);
 
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
 
 }

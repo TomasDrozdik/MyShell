@@ -35,9 +35,12 @@
 
 extern int return_val;
 extern int custom_exit;
-extern int sigint_handled;
+extern int child_pid;
 
-void
+/*
+ * RETURNS: -1 if process exited with signal, >0 otherwise.
+ */
+int
 process_semi_expr(struct semi_expr_s *);
 
 /*
@@ -63,10 +66,9 @@ call(struct expr_s *expr)
 
 	STAILQ_FOREACH(ent, &expr->semi_exprs, entries) {
 
-		process_semi_expr(ent->item);
+		if (process_semi_expr(ent->item) == -1) {
 
-		if (sigint_handled == 1) {
-			break;
+			return;
 		}
 	}
 }
@@ -75,34 +77,40 @@ call(struct expr_s *expr)
  * Other function definitions
  */
 
-void
+int
 process_semi_expr(struct semi_expr_s *semi_expr)
 {
-	int pid, stat_val;
+	int pid, stat_val = 0;
 
 	/* -1 implies internal cmd */
-	if ((pid = process_cmd(semi_expr->cmd) != -1)) {
+	if ((pid = process_cmd(semi_expr->cmd)) > 0) {
+
+		/* Set global for SIGINT handler */
+		child_pid = pid;
 
 		waitpid(pid, &stat_val, 0);
+
+		/* Reset global for SIGINT handler */
+		child_pid = -1;
 
 		/* Properly set return value. */
 		if (WIFEXITED(stat_val)) {
 
 			return_val = WEXITSTATUS(stat_val);
 
+
 		} else if (WIFSIGNALED(stat_val)) {
 
-			fprintf(stderr, "Killed by signal %d\n", WTERMSIG(stat_val));
-
 			return_val = 128 + WTERMSIG(stat_val);
+			return (-1);
 
 		} else {
-
-			fprintf(stderr, "Unkonwn return value.\n");
 
 			return_val = -1;
 		}
 	}
+
+	return (0);
 }
 
 int
@@ -128,7 +136,7 @@ process_cmd(struct cmd_s *cmd)
 
 	} else if (strcmp(argv[1], "cd") == 0) {
 
-		return_val = cd(cmd->argc, argv);
+		return_val = cd(cmd->argc, argv + 1);
 		free(argv);
 
 		return (-1);
@@ -168,7 +176,7 @@ strip_path(char *str)
 	char *lst_occurence;
 
 	if ((lst_occurence = strrchr(str, '/'))) {
-		fprintf(stderr, "strip_path: %s -> %s", str, lst_occurence);
+
 		return (lst_occurence + 1);
 	}
 

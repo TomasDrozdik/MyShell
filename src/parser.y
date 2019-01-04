@@ -52,6 +52,10 @@ extern int return_val;
 	struct cmd_s *cmd_s;
 }
 
+%destructor { free_expr($$); } <expr_s>
+%destructor { free_semi_expr($$); } <semi_expr_s>
+%destructor { free_cmd($$); } <cmd_s>
+
 /* declare tokens */
 %token SEMICOLON
 %token END_OF_FILE
@@ -182,6 +186,8 @@ yyerror(char const *s)
 		unexpected_token = ";";
 	} else if (strstr(s, "ID") - s == desired_len) {
 		unexpected_token = "ID";
+	} else if (strstr(s, "PIPE") - s == desired_len) {
+		unexpected_token = "|";
 	} else if (strstr(s, "REDIRECT_SGN") - s == desired_len) {
 		unexpected_token = "REDIRECT_SGN";
 	}

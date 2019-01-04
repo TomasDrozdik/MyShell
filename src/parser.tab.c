@@ -470,8 +470,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    86,    86,    91,    98,    99,   102,   111,   114,   118,
-     124,   131,   134
+       0,    90,    90,    95,   102,   103,   106,   115,   118,   122,
+     128,   135,   138
 };
 #endif
 
@@ -990,7 +990,36 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
   YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-  YYUSE (yytype);
+  switch (yytype)
+    {
+          case 12: /* semi_expr  */
+#line 56 "parser.y" /* yacc.c:1254  */
+      { free_semi_expr(((*yyvaluep).semi_expr_s)); }
+#line 999 "parser.tab.c" /* yacc.c:1254  */
+        break;
+
+    case 13: /* semi_exprs  */
+#line 55 "parser.y" /* yacc.c:1254  */
+      { free_expr(((*yyvaluep).expr_s)); }
+#line 1005 "parser.tab.c" /* yacc.c:1254  */
+        break;
+
+    case 14: /* cmd  */
+#line 57 "parser.y" /* yacc.c:1254  */
+      { free_cmd(((*yyvaluep).cmd_s)); }
+#line 1011 "parser.tab.c" /* yacc.c:1254  */
+        break;
+
+    case 15: /* ids  */
+#line 57 "parser.y" /* yacc.c:1254  */
+      { free_cmd(((*yyvaluep).cmd_s)); }
+#line 1017 "parser.tab.c" /* yacc.c:1254  */
+        break;
+
+
+      default:
+        break;
+    }
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
@@ -1245,83 +1274,83 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 87 "parser.y" /* yacc.c:1645  */
+#line 91 "parser.y" /* yacc.c:1645  */
     {
 		expr_result = push_front_expr((yyvsp[-1].expr_s), (yyvsp[-2].semi_expr_s));
 		YYACCEPT;
 	}
-#line 1254 "parser.tab.c" /* yacc.c:1645  */
+#line 1283 "parser.tab.c" /* yacc.c:1645  */
     break;
 
   case 3:
-#line 92 "parser.y" /* yacc.c:1645  */
+#line 96 "parser.y" /* yacc.c:1645  */
     {
 		expr_result = NULL;
 		YYACCEPT;
 	}
-#line 1263 "parser.tab.c" /* yacc.c:1645  */
+#line 1292 "parser.tab.c" /* yacc.c:1645  */
     break;
 
   case 6:
-#line 103 "parser.y" /* yacc.c:1645  */
+#line 107 "parser.y" /* yacc.c:1645  */
     {
 		struct semi_expr_s *semi_s = new_semi_expr();
 		semi_s->cmd = (yyvsp[0].cmd_s);
 		(yyval.semi_expr_s) = semi_s;
 	}
-#line 1273 "parser.tab.c" /* yacc.c:1645  */
+#line 1302 "parser.tab.c" /* yacc.c:1645  */
     break;
 
   case 7:
-#line 111 "parser.y" /* yacc.c:1645  */
-    {
-		(yyval.expr_s) = new_expr();
-	}
-#line 1281 "parser.tab.c" /* yacc.c:1645  */
-    break;
-
-  case 8:
 #line 115 "parser.y" /* yacc.c:1645  */
     {
 		(yyval.expr_s) = new_expr();
 	}
-#line 1289 "parser.tab.c" /* yacc.c:1645  */
+#line 1310 "parser.tab.c" /* yacc.c:1645  */
+    break;
+
+  case 8:
+#line 119 "parser.y" /* yacc.c:1645  */
+    {
+		(yyval.expr_s) = new_expr();
+	}
+#line 1318 "parser.tab.c" /* yacc.c:1645  */
     break;
 
   case 9:
-#line 119 "parser.y" /* yacc.c:1645  */
+#line 123 "parser.y" /* yacc.c:1645  */
     {
 		(yyval.expr_s) = push_front_expr((yyvsp[0].expr_s), (yyvsp[-1].semi_expr_s));
 	}
-#line 1297 "parser.tab.c" /* yacc.c:1645  */
+#line 1326 "parser.tab.c" /* yacc.c:1645  */
     break;
 
   case 10:
-#line 125 "parser.y" /* yacc.c:1645  */
+#line 129 "parser.y" /* yacc.c:1645  */
     {
 		(yyval.cmd_s) = push_front_cmd((yyvsp[0].cmd_s), (yyvsp[-1].str));
 	}
-#line 1305 "parser.tab.c" /* yacc.c:1645  */
+#line 1334 "parser.tab.c" /* yacc.c:1645  */
     break;
 
   case 11:
-#line 131 "parser.y" /* yacc.c:1645  */
+#line 135 "parser.y" /* yacc.c:1645  */
     {
 		(yyval.cmd_s) = new_cmd();
 	}
-#line 1313 "parser.tab.c" /* yacc.c:1645  */
+#line 1342 "parser.tab.c" /* yacc.c:1645  */
     break;
 
   case 12:
-#line 135 "parser.y" /* yacc.c:1645  */
+#line 139 "parser.y" /* yacc.c:1645  */
     {
 		(yyval.cmd_s) = push_front_cmd((yyvsp[0].cmd_s), (yyvsp[-1].str));
 	}
-#line 1321 "parser.tab.c" /* yacc.c:1645  */
+#line 1350 "parser.tab.c" /* yacc.c:1645  */
     break;
 
 
-#line 1325 "parser.tab.c" /* yacc.c:1645  */
+#line 1354 "parser.tab.c" /* yacc.c:1645  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1548,7 +1577,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 161 "parser.y" /* yacc.c:1903  */
+#line 165 "parser.y" /* yacc.c:1903  */
 
 
 void
@@ -1573,6 +1602,8 @@ yyerror(char const *s)
 		unexpected_token = ";";
 	} else if (strstr(s, "ID") - s == desired_len) {
 		unexpected_token = "ID";
+	} else if (strstr(s, "PIPE") - s == desired_len) {
+		unexpected_token = "|";
 	} else if (strstr(s, "REDIRECT_SGN") - s == desired_len) {
 		unexpected_token = "REDIRECT_SGN";
 	}

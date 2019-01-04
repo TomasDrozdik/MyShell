@@ -1,13 +1,11 @@
-.PHONY: cstyle all clean
-
 CC=cc
 C_STD=c99
-CFLAGS=-Wall -std=$(C_STD) -Wshadow -Wpointer-arith -Wcast-qual \
+CFLAGS=-Wall -std=$(C_STD) -pedantic -Wshadow -Wpointer-arith -Wcast-qual \
 	-Wstrict-prototypes -g
-OUT_FOLDER=../build
 
-TARGETS= parser.tab.c parser.tab.h lex.yy.c mysh
+TARGETS= parser.tab.c lex.yy.c parser.tab.h mysh
 OBJ_FILES= main.o parser_structs.o reader.o caller.o cd.o
+
 
 all: mysh
 
@@ -26,13 +24,6 @@ mysh: parser.tab.c lex.yy.c $(OBJ_FILES)
 	$(CC) -o $@ $^ -lfl -lreadline
 
 clean:
-	rm -rf $(TARGETS) $(OBJ_FILES)
+	rm -rf $(OBJ_FILES) $(TARGETS)
 
-cstyle:
-	@echo "Checking C style"
-	@find . -type -name '*.[ch]' | while read file; do \
-		../cstyle.pl $$file; \
-	done | grep ':'; \
-	if [ $$? -eq 0]; then \
-		exit 1;
-	fi
+.PHONY: all clean
