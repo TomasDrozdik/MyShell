@@ -1,6 +1,6 @@
 # Custom stuff
-cstyle.pl
 .vscode
+*core*
 
 # Prerequisites
 *.d

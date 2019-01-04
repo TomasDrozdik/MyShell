@@ -203,8 +203,7 @@ sigint_handler(int sig)
 		kill(child_pid, sig);
 		fprintf(stderr, "Killed by signal %d\n", sig);
 
-	}
-	else {
+	} else {
 
 		/* Reset the readline() */
 		write(1, "\n", 1);
