@@ -1,20 +1,15 @@
 /* parser_structs.c */
 
+#define	STDDEF_H
+#include <stddef.h>
+#define	STDIO_H
+#include <stdio.h>
+#define	STDLIB_H
+#include <stdlib.h>
+
 #ifndef PARSER_STRUCTS_H
 #define	PARSER_STRUCTS_H
 #include "parser_structs.h"
-#endif
-#ifndef STDDEF_H
-#define	STDDEF_H
-#include <stddef.h>
-#endif
-#ifndef STDIO_H
-#define	STDIO_H
-#include <stdio.h>
-#endif
-#ifndef STDLIB_H
-#define	STDLIB_H
-#include <stdlib.h>
 #endif
 
 /*

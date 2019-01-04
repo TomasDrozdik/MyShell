@@ -1,6 +1,9 @@
 # Custom stuff
 .vscode
 *core*
+mysh
+parser.tab.c
+parser.tab.h
 
 # Prerequisites
 *.d

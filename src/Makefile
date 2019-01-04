@@ -14,8 +14,8 @@ parser.tab.c: parser.y
 
 parser.tab.h: parser.tab.c
 
-lex.yy.c: scanner.lex parser.tab.h
-	flex scanner.lex
+lex.yy.c: scanner.l parser.tab.h
+	flex $<
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<

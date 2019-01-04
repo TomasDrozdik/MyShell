@@ -2,54 +2,35 @@
 
 #define	_XOPEN_SOURCE	700
 
-#ifndef ERR_H
 #define	ERR_H
 #include <err.h>
-#endif
-#ifndef ERRNO_H
 #define	ERRNO_H
 #include <errno.h>
-#endif
-#ifndef FCNTL_H
 #define	FCNTL_H
 #include <fcntl.h>
-#endif
-#ifndef GETOPT_H
 #define	GETOPT_H
 #include <getopt.h>
-#endif
-#ifndef PARSER_STRUCTS_H
+#define	SIGNAL_H
+#include <signal.h>
+#define	STDIO_H
+#include <stdio.h>
+#define	READLINE_H
+#include <readline/readline.h>
+#include <readline/history.h>
+#define	STDLIB_H
+#include <stdlib.h>
+#define	SYS_STAT_H
+#include <sys/stat.h>
+#define	UNISTD_H
+#include <unistd.h>
+
+#ifndef	PARSER_STRUCTS_H
 #define	PARSER_STRUCTS_H
 #include "parser_structs.h"
 #endif
 #ifndef READER_H
 #define	READER_H
 #include "reader.h"
-#endif
-#ifndef READLINE_H
-#define	READLINE_H
-#include <readline/readline.h>
-#include <readline/history.h>
-#endif
-#ifndef SIGNAL_H
-#define	SIGNAL_H
-#include <signal.h>
-#endif
-#ifndef STDIO_H
-#define	STDIO_H
-#include <stdio.h>
-#endif
-#ifndef STDLIB_H
-#define	STDLIB_H
-#include <stdlib.h>
-#endif
-#ifndef SYS_STAT_H
-#define	SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#ifndef UNISTD_H
-#define	UNISTD_H
-#include <unistd.h>
 #endif
 #ifndef CALLER_H
 #define	CALLER_H
@@ -112,15 +93,12 @@ main(int argc, char **argv)
 
 	/* Parse arguments */
 	while ((opt = getopt(argc, argv, "c:")) != -1) {
-
 		switch (opt) {
 		case 'c':
-
 			input = input_str_init(optarg);
 			break;
 
 		case '?':
-
 			return (2);
 			break;
 		}
@@ -132,15 +110,11 @@ main(int argc, char **argv)
 		if (optind != argc) {
 
 			if ((f = fopen(argv[optind], "r")) == NULL) {
-
 				err(1, "fopen");
-
 			}
 
 			input = input_file_init(f);
-
 		} else {
-
 			/* Default init */
 			input = input_default_init();
 		}
@@ -166,25 +140,21 @@ run(struct input_s *input)
 
 			/* INVALID implies -c input -> cant free argv */
 			if (input->t != INVALID) {
-
 				free(line);
 			}
 
 			/* In case of file as a input type break on first error */
 			if (error_occured && input->t == FILE_IN) {
-
 				/* expr_result has been freed by bison destructor */
 				return;
 			}
 
 			if (expr_result) {
-
 				call(expr_result);
 				free_expr(expr_result);
 			}
 
 			if (custom_exit) {
-
 				return;
 			}
 	}
@@ -199,12 +169,9 @@ sigint_handler(int sig)
 	 * cmd.
 	 */
 	if (child_pid > 0) {
-
 		kill(child_pid, sig);
 		fprintf(stderr, "Killed by signal %d\n", sig);
-
 	} else {
-
 		/* Reset the readline() */
 		write(1, "\n", 1);
 
@@ -212,5 +179,4 @@ sigint_handler(int sig)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
-
 }

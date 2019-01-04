@@ -66,8 +66,7 @@ call(struct expr_s *expr)
 
 	STAILQ_FOREACH(ent, &expr->semi_exprs, entries) {
 
-		if (process_semi_expr(ent->item) == -1) {
-
+		if (process_semi_expr(ent->item) == -1 || custom_exit) {
 			return;
 		}
 	}
@@ -83,31 +82,27 @@ process_semi_expr(struct semi_expr_s *semi_expr)
 	int pid, stat_val = 0;
 
 	/* -1 implies internal cmd */
-	if ((pid = process_cmd(semi_expr->cmd)) > 0) {
+	if ((pid = process_cmd(semi_expr->cmd)) <= 0) {
+		return (0);
+	}
 
-		/* Set global for SIGINT handler */
-		child_pid = pid;
+	/* Set global for SIGINT handler */
+	child_pid = pid;
 
-		waitpid(pid, &stat_val, 0);
+	waitpid(pid, &stat_val, 0);
 
-		/* Reset global for SIGINT handler */
-		child_pid = -1;
+	/* Reset global for SIGINT handler */
+	child_pid = -1;
 
-		/* Properly set return value. */
-		if (WIFEXITED(stat_val)) {
+	/* Properly set return value. */
+	if (WIFEXITED(stat_val)) {
+		return_val = WEXITSTATUS(stat_val);
+	} else if (WIFSIGNALED(stat_val)) {
+		return_val = 128 + WTERMSIG(stat_val);
 
-			return_val = WEXITSTATUS(stat_val);
-
-
-		} else if (WIFSIGNALED(stat_val)) {
-
-			return_val = 128 + WTERMSIG(stat_val);
-			return (-1);
-
-		} else {
-
-			return_val = -1;
-		}
+		return (-1);
+	} else {
+		return_val = -1;
 	}
 
 	return (0);
@@ -128,14 +123,11 @@ process_cmd(struct cmd_s *cmd)
 
 	/* Process custom functions. */
 	if (strcmp(argv[1], "exit") == 0) {
-
 		custom_exit = 1;
 		free(argv);
 
 		return (-1);
-
 	} else if (strcmp(argv[1], "cd") == 0) {
-
 		return_val = cd(cmd->argc, argv + 1);
 		free(argv);
 
@@ -152,16 +144,13 @@ process_cmd(struct cmd_s *cmd)
 
 	switch (pid = fork()) {
 	case -1:
-
 		err(1, "fork");
 
 	case 0:
-
 		execvp(argv[0], argv + 1);
 		err(127, argv[0]);
 
 	default:
-
 		/* Clean up */
 		free(argv[0]);
 		free(argv);
@@ -176,7 +165,6 @@ strip_path(char *str)
 	char *lst_occurence;
 
 	if ((lst_occurence = strrchr(str, '/'))) {
-
 		return (lst_occurence + 1);
 	}
 

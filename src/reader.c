@@ -2,26 +2,19 @@
 
 #define	_GNU_SOURCE
 
-#ifndef ERR_H
 #define	ERR_H
 #include <err.h>
-#endif
-#ifndef READER_H
-#define	READER_H
-#include "reader.h"
-#endif
-#ifndef READLINE_H
+#define	STDIO_H
+#include <stdio.h>
+#define	STDLIB_H
+#include <stdlib.h>
 #define	READLINE_H
 #include <readline/readline.h>
 #include <readline/history.h>
-#endif
-#ifndef STDIO_H
-#define	STDIO_H
-#include <stdio.h>
-#endif
-#ifndef STDLIB_H
-#define	STDLIB_H
-#include <stdlib.h>
+
+#ifndef READER_H
+#define	READER_H
+#include "reader.h"
 #endif
 
 char *
