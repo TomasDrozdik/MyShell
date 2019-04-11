@@ -50,20 +50,20 @@ extern int return_val;
 %token<red_sgn> REDIRECT_SGN
 
 /* declare types of used nonterminals */
-// TODO: PHASE2
+/*
+%type<expr_s> expr
+%type<semi_expr_s> semi_expr
+%type<pipe_expr_s> pipe_expr
+%type<redirect_expr_s> redirect_expr
+%type<redirection_s> redirection
+%type<cmd_s> cmd
 
-// %type<expr_s> expr
-// %type<semi_expr_s> semi_expr
-// %type<pipe_expr_s> pipe_expr
-// %type<redirect_expr_s> redirect_expr
-// %type<redirection_s> redirection
-// %type<cmd_s> cmd
-
-// %type<TODO: head of the list> semi_exprs
-// %type<TODO: head of the list> pipe_exprs
-// %type<TODO: head of the list> redirection
-// %type<TODO: head of the list> pipe_exprs
-// %type<TODO: head of the list> pipe_exprs
+%type<TODO: head of the list> semi_exprs
+%type<TODO: head of the list> pipe_exprs
+%type<TODO: head of the list> redirection
+%type<TODO: head of the list> pipe_exprs
+%type<TODO: head of the list> pipe_exprs
+*/
 
 %type<expr_s> semi_exprs
 %type<semi_expr_s> semi_expr

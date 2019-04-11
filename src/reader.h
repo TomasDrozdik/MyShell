@@ -1,13 +1,10 @@
 /* reader.h */
 
-#ifndef STDDEF_H
-#define	STDDEF_H
+#ifndef MYSHELL_SRC_READER_H_
+#define MYSHELL_SRC_READER_H_
+
 #include <stddef.h>
-#endif
-#ifndef STDIO_H
-#define	STDIO_H
 #include <stdio.h>
-#endif
 
 enum input_type {
 	CONSOLE_IN,
@@ -33,3 +30,5 @@ input_file_init(FILE *);
 
 char *
 readln(struct input_s *);
+
+#endif  // MYSHELL_SRC_READER_H_

@@ -95,7 +95,6 @@ main(int argc, char **argv)
 			input = input_default_init();
 		}
 	}
-
 	run(input);
 
 	free(f);
@@ -111,7 +110,7 @@ run(struct input_s *input)
 		yy_scan_string(line);
 		yyparse();
 		yylex_destroy();
-		/* INVALID implies -c input -> cant free argv */
+		/* INVALID implies -c input -> can't free argv */
 		if (input->t != INVALID) {
 			free(line);
 		}
