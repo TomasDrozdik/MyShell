@@ -5,27 +5,12 @@
 
 %{
 
-#ifndef STRING_H
-#define	STRING_H
 #include <string.h>
-#endif
-#ifndef STDLIB_H
-#define	STDLIB_H
 #include <stdlib.h>
-#endif
-#ifndef PARSER_STRUCTS_H
-#define	PARSER_STRUCTS_H
 #include "parser_structs.h"
-#endif
 
-// Include bison tokens
-#include "parser.tab.h"
-
-// Include used structs
-#ifndef PARSER_STRUCTS_H
-#define	PARSER_STRUCTS_H
-#include "parser_structs.h"
-#endif
+#include "parser.tab.h"  // Include bison tokens
+#include "parser_structs.h"  // Include used structs
 
 extern void yyerror(char const *);
 extern int line_num;

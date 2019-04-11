@@ -1,37 +1,13 @@
 /* caller.c */
 
-#ifndef ERR_H
-#define	ERR_H
 #include <err.h>
-#endif
-#ifndef CALLER_H
-#define	CALLER_H
 #include "caller.h"
-#endif
-#ifndef CD_H
-#define	CD_H
 #include "cd.h"
-#endif
-#ifndef UNISTD_H
-#define	UNISTD_H
 #include <unistd.h>
-#endif
-#ifndef STDIO_H
-#define	STDIO_H
 #include <stdio.h>
-#endif
-#ifndef STDLIB_H
-#define	STDLIB_H
 #include <stdlib.h>
-#endif
-#ifndef STRING_H
-#define	STRING_H
 #include <string.h>
-#endif
-#ifndef SYS_WAIT_H
-#define	SYS_WAIT_H
 #include <sys/wait.h>
-#endif
 
 extern int return_val;
 extern int custom_exit;
@@ -63,9 +39,7 @@ void
 call(struct expr_s *expr)
 {
 	struct semi_expr_entry *ent;
-
 	STAILQ_FOREACH(ent, &expr->semi_exprs, entries) {
-
 		if (process_semi_expr(ent->item) == -1 || custom_exit) {
 			return;
 		}
@@ -88,7 +62,6 @@ process_semi_expr(struct semi_expr_s *semi_expr)
 
 	/* Set global for SIGINT handler */
 	child_pid = pid;
-
 	waitpid(pid, &stat_val, 0);
 
 	/* Reset global for SIGINT handler */
@@ -99,19 +72,17 @@ process_semi_expr(struct semi_expr_s *semi_expr)
 		return_val = WEXITSTATUS(stat_val);
 	} else if (WIFSIGNALED(stat_val)) {
 		return_val = 128 + WTERMSIG(stat_val);
-
 		return (-1);
 	} else {
 		return_val = -1;
 	}
-
 	return (0);
 }
 
 int
 process_cmd(struct cmd_s *cmd)
 {
-	int pid, i = 1; /* i starts from 1 so that argv[1] cpy to argv[0] */
+	int pid, i = 1;  /* i starts from 1 so that argv[1] cpy to argv[0] */
 	int argc = cmd->argc + 2;  /* + 2 for argv[0] argv[0] ... NULL */
 	char **argv = malloc(sizeof (argv[0]) * argc);
 	struct arg_entry *ent;
@@ -125,12 +96,10 @@ process_cmd(struct cmd_s *cmd)
 	if (strcmp(argv[1], "exit") == 0) {
 		custom_exit = 1;
 		free(argv);
-
 		return (-1);
 	} else if (strcmp(argv[1], "cd") == 0) {
 		return_val = cd(cmd->argc, argv + 1);
 		free(argv);
-
 		return (-1);
 	}
 
@@ -145,17 +114,14 @@ process_cmd(struct cmd_s *cmd)
 	switch (pid = fork()) {
 	case -1:
 		err(1, "fork");
-
 	case 0:
 		execvp(argv[0], argv + 1);
 		err(127, argv[0]);
-
 	default:
 		/* Clean up */
 		free(argv[0]);
 		free(argv);
 	}
-
 	return (pid);
 }
 
@@ -163,10 +129,8 @@ char *
 strip_path(char *str)
 {
 	char *lst_occurence;
-
 	if ((lst_occurence = strrchr(str, '/'))) {
 		return (lst_occurence + 1);
 	}
-
 	return (str);
 }

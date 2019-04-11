@@ -59,7 +59,6 @@ sigint_handler(int sig);
 void
 run(struct input_s *);
 
-
 int
 main(int argc, char **argv)
 {
@@ -78,7 +77,6 @@ main(int argc, char **argv)
 		case 'c':
 			input = input_str_init(optarg);
 			break;
-
 		case '?':
 			return (2);
 			break;
@@ -91,7 +89,6 @@ main(int argc, char **argv)
 			if ((f = fopen(argv[optind], "r")) == NULL) {
 				err(1, "fopen");
 			}
-
 			input = input_file_init(f);
 		} else {
 			/* Default init */
@@ -103,7 +100,6 @@ main(int argc, char **argv)
 
 	free(f);
 	free(input);
-
 	return (return_val);
 }
 
@@ -111,32 +107,27 @@ void
 run(struct input_s *input)
 {
 	char *line;
-
 	while ((line = readln(input)) != NULL) {
 		yy_scan_string(line);
 		yyparse();
 		yylex_destroy();
-
 		/* INVALID implies -c input -> cant free argv */
 		if (input->t != INVALID) {
 			free(line);
 		}
-
 		/* In case of file as a input type break on first error */
 		if (error_occured && input->t == FILE_IN) {
 			/* expr_result has been freed by bison destructor */
 			return;
 		}
-
 		if (expr_result) {
 			call(expr_result);
 			free_expr(expr_result);
 		}
-
 		if (custom_exit) {
 			return;
 		}
-    }
+  }
 }
 
 void
@@ -153,7 +144,6 @@ sigint_handler(int sig)
 	} else {
 		/* Reset the readline() */
 		write(1, "\n", 1);
-
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
