@@ -62,32 +62,25 @@ readln(struct input_s *in)
 
 	switch (in->t) {
 	case CONSOLE_IN:
-
 		prompt = set_prompt(prompt);
 		line = readline(prompt);
 		free(prompt);
 
 		if (!line) {
-
 			break;
-
 		}
 		if (strcmp(line, "") != 0) {
-
 			add_history(line);
 		}
 		break;
 
 	case STRING_IN:
-
 		line = in->str;
 		in->t = INVALID;
 		break;
 
 	case FILE_IN:
-
 		if (getline(&line, &n, in->fd) == -1) {
-
 			/* In case of failiure free the buffer see getline(3) */
 			free(line);
 			line = NULL;
@@ -95,12 +88,10 @@ readln(struct input_s *in)
 		break;
 
 	case INVALID:
-
 		line = NULL;
 		break;
 
 	default:
-
 		/* Invalid in->t == INVALID */
 		errx(1, "Unsupported input_type");
 	}
@@ -112,6 +103,7 @@ readln(struct input_s *in)
  * Defintion of help functions.
  */
 
+// TODO: could be done more efficiently via some global shell property.
 char *
 set_prompt(char *prompt)
 {

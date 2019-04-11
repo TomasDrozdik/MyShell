@@ -1,14 +1,15 @@
 /* caller.h */
-
 /*
  * 	Library used to process and execute myshell commands
  * in form of struct expr_s as a output of bison
  */
 
-#ifndef PARSER_STRUCTS_H
-#define	PARSER_STRUCTS_H
+#ifndef MYSHELL_SRC_CALLER_H_
+#define MYSHELL_SRC_CALLER_H_
+
 #include "parser_structs.h"
-#endif
 
 void
 call(struct expr_s *expr);
+
+#endif  // MYSHELL_SRC_CALLER_H_

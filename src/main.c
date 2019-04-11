@@ -2,40 +2,21 @@
 
 #define	_XOPEN_SOURCE	700
 
-#define	ERR_H
 #include <err.h>
-#define	ERRNO_H
 #include <errno.h>
-#define	FCNTL_H
 #include <fcntl.h>
-#define	GETOPT_H
 #include <getopt.h>
-#define	SIGNAL_H
 #include <signal.h>
-#define	STDIO_H
 #include <stdio.h>
-#define	READLINE_H
 #include <readline/readline.h>
 #include <readline/history.h>
-#define	STDLIB_H
 #include <stdlib.h>
-#define	SYS_STAT_H
 #include <sys/stat.h>
-#define	UNISTD_H
 #include <unistd.h>
 
-#ifndef	PARSER_STRUCTS_H
-#define	PARSER_STRUCTS_H
 #include "parser_structs.h"
-#endif
-#ifndef READER_H
-#define	READER_H
 #include "reader.h"
-#endif
-#ifndef CALLER_H
-#define	CALLER_H
 #include "caller.h"
-#endif
 
 /* Declare bison extern functions. */
 extern void yyparse(void);
@@ -106,9 +87,7 @@ main(int argc, char **argv)
 
 	/* If -c <string> option was not used try input file. */
 	if (!input) {
-
 		if (optind != argc) {
-
 			if ((f = fopen(argv[optind], "r")) == NULL) {
 				err(1, "fopen");
 			}
@@ -134,30 +113,30 @@ run(struct input_s *input)
 	char *line;
 
 	while ((line = readln(input)) != NULL) {
-			yy_scan_string(line);
-			yyparse();
-			yylex_destroy();
+		yy_scan_string(line);
+		yyparse();
+		yylex_destroy();
 
-			/* INVALID implies -c input -> cant free argv */
-			if (input->t != INVALID) {
-				free(line);
-			}
+		/* INVALID implies -c input -> cant free argv */
+		if (input->t != INVALID) {
+			free(line);
+		}
 
-			/* In case of file as a input type break on first error */
-			if (error_occured && input->t == FILE_IN) {
-				/* expr_result has been freed by bison destructor */
-				return;
-			}
+		/* In case of file as a input type break on first error */
+		if (error_occured && input->t == FILE_IN) {
+			/* expr_result has been freed by bison destructor */
+			return;
+		}
 
-			if (expr_result) {
-				call(expr_result);
-				free_expr(expr_result);
-			}
+		if (expr_result) {
+			call(expr_result);
+			free_expr(expr_result);
+		}
 
-			if (custom_exit) {
-				return;
-			}
-	}
+		if (custom_exit) {
+			return;
+		}
+    }
 }
 
 void

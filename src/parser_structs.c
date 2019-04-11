@@ -1,20 +1,10 @@
 /* parser_structs.c */
 
-#define	STDDEF_H
-#include <stddef.h>
-#define	STDIO_H
-#include <stdio.h>
-#define	STDLIB_H
-#include <stdlib.h>
-
-#ifndef PARSER_STRUCTS_H
-#define	PARSER_STRUCTS_H
 #include "parser_structs.h"
-#endif
 
-/*
- * Help functions declarations.
- */
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 void
 free_semi_expr(struct semi_expr_s *cmd);
@@ -30,10 +20,8 @@ struct expr_s *
 new_expr(void)
 {
 	struct expr_s *res = malloc(sizeof (struct expr_s));
-
 	res->len = 0;
 	STAILQ_INIT(&res->semi_exprs);
-
 	return (res);
 }
 
@@ -42,9 +30,7 @@ new_semi_expr(void)
 {
 	// TODO: mod for PHASE1
 	struct semi_expr_s *res = malloc(sizeof (struct semi_expr_s));
-
 	res->cmd = NULL;
-
 	return (res);
 }
 
@@ -66,10 +52,8 @@ struct cmd_s *
 new_cmd(void)
 {
 	struct cmd_s *res = malloc(sizeof (struct cmd_s));
-
 	res->argc = 0;
 	STAILQ_INIT(&res->argv);
-
 	return (res);
 }
 
@@ -84,11 +68,9 @@ struct cmd_s *
 push_front_cmd(struct cmd_s *obj, char *item)
 {
 	struct arg_entry *entry = malloc(sizeof (struct arg_entry));
-
 	entry->arg = item;
 	STAILQ_INSERT_HEAD(&obj->argv, entry, entries);
 	++obj->argc;
-
 	return (obj);
 }
 
@@ -96,11 +78,9 @@ struct expr_s *
 push_front_expr(struct expr_s *obj, struct semi_expr_s *item)
 {
 	struct semi_expr_entry *entry = malloc(sizeof (struct arg_entry));
-
 	entry->item = item;
 	STAILQ_INSERT_HEAD(&obj->semi_exprs, entry, entries);
 	++obj->len;
-
 	return (obj);
 }
 
@@ -109,7 +89,6 @@ free_expr(struct expr_s *expr)
 {
 	struct semi_expr_entry *ent;
 	semi_expr_slist_t *head = &expr->semi_exprs;
-
 	while (!STAILQ_EMPTY(head)) {
 		ent = STAILQ_FIRST(head);
 		STAILQ_REMOVE_HEAD(head, entries);
@@ -120,7 +99,7 @@ free_expr(struct expr_s *expr)
 }
 
 /*
- * Definitions of help functions.
+ * Other definitions.
  */
 
 void
@@ -135,7 +114,6 @@ free_cmd(struct cmd_s *cmd)
 {
 	struct arg_entry *ent;
 	arg_slist_t *head = &cmd->argv;
-
 	while (!STAILQ_EMPTY(head)) {
 		ent = STAILQ_FIRST(head);
 		STAILQ_REMOVE_HEAD(head, entries);

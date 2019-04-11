@@ -1,9 +1,9 @@
 /* parser_structs.h */
 
-#ifndef QUEUE_H
-#define	QUEUE_H
+#ifndef MYSHELL_SRC_PARSER_STRUCTS_H_
+#define MYSHELL_SRC_PARSER_STRUCTS_H_
+
 #include <sys/queue.h>
-#endif
 
 typedef enum {
 	IN_RED,
@@ -116,3 +116,5 @@ free_semi_expr(struct semi_expr_s *semi);
 
 void
 free_cmd(struct cmd_s *cmd);
+
+#endif  // MYSHELL_SRC_PARSER_STRUCTS_H_

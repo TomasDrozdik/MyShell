@@ -7,46 +7,31 @@
 %code requires
 {
 /* Include user structs for %union types */
-#ifndef PARSER_STRUCTS_H
-#define	PARSER_STRUCTS_H
 #include "parser_structs.h"
-#endif
 }
 
 %{
-#ifndef STDIO_H
-#define	STDIO_H
 #include <stdio.h>
-#endif
-#ifndef STDIO_H
-#define	STDIO_H
-#include <stdio.h>
-#endif
-#ifndef STRING_H
-#define	STRING_H
 #include <string.h>
-#endif
 
 /* Forward decl */
 void yyerror(char const *);
 
-/* let bison know of lex */
+/* Let bison know of lex */
 extern int yylex(void);
 
-/* way of passing AST result out of bison */
+/* Way of passing AST result out of bison */
 extern struct expr_s *expr_result;
 
-/* for yyerror */
+/* For yyerror */
 extern int line_num;
 extern int error_occured;
 extern int return_val;
-
 %}
 
 %union {
 	char *str;
 	redirect_sgn red_sgn;
-
 	struct expr_s *expr_s;
 	struct semi_expr_s *semi_expr_s;
 	struct cmd_s *cmd_s;
@@ -80,11 +65,9 @@ extern int return_val;
 // %type<TODO: head of the list> pipe_exprs
 // %type<TODO: head of the list> pipe_exprs
 
-
 %type<expr_s> semi_exprs
 %type<semi_expr_s> semi_expr
 %type<cmd_s> cmd ids
-
 %%
 
 expr:	semi_expr semi_exprs end
@@ -169,15 +152,12 @@ yyerror(char const *s)
 {
 	char *unexpected_token = NULL;
 	int desired_len = 25;
-
 	// TODO: can be redone more efficiently (smthing like literal tokens)
-
 	if (!s) {
 		/* Call from signal handler just stop the execution */
 		return;
 	}
-
-	/* parser extended error message of bison */
+	/* Parser extended error message of bison */
 	if (strstr(s, "END_OF_LINE") - s == desired_len) {
 		unexpected_token = "\\n";
 	} else if (strstr(s, "END_OF_FILE") - s == desired_len) {
@@ -202,7 +182,6 @@ yyerror(char const *s)
 			line_num, s);
 		return_val = 253;
 	}
-
 	/* Stop the execution on error. */
 	error_occured = 1;
 }
