@@ -136,11 +136,9 @@ process_semi_expr(struct semi_expr *expr)
 
 	/* Properly set return value. */
 	if (WIFEXITED(stat_val)) {
-		printf("exited normally\n");
 		return_val = WEXITSTATUS(stat_val);
 	} else if (WIFSIGNALED(stat_val)) {
 		return_val = 128 + WTERMSIG(stat_val);
-		printf("exited with signal %d\n", return_val);
 	} else {
 		return_val = -1;
 	}
