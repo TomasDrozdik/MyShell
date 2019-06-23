@@ -11,7 +11,18 @@
 #include <readline/history.h>
 
 char *
-set_prompt(char *prompt);
+set_prompt(char *prompt)
+{
+	char *header = "mysh:";
+	char *cwd = getenv("PWD");
+	char *footer = "$ ";
+
+	prompt = realloc(prompt, strlen(header) + strlen(cwd) + strlen(footer) + 1);
+	prompt = strcpy(prompt, header);
+	strcat(prompt, cwd);
+	strcat(prompt, footer);
+	return (prompt);
+}
 
 /*
  * Definition of reader.h functions.
@@ -56,6 +67,7 @@ readln(struct input_s *in)
 		free(prompt);
 		if (!line) {
 			break;
+		}
 		if (strcmp(line, "") != 0)
 			add_history(line);
 		break;
@@ -78,23 +90,4 @@ readln(struct input_s *in)
 		errx(1, "Unsupported input_type");
 	}
 	return (line);
-}
-
-/*
- * Defintion of help functions.
- */
-
-// TODO: could be done more efficiently via some global shell property.
-char *
-set_prompt(char *prompt)
-{
-	char *header = "mysh:";
-	char *cwd = getenv("PWD");
-	char *footer = "$ ";
-
-	prompt = realloc(prompt, strlen(header) + strlen(cwd) + strlen(footer) + 1);
-	prompt = strcpy(prompt, header);
-	strcat(prompt, cwd);
-	strcat(prompt, footer);
-	return (prompt);
 }
