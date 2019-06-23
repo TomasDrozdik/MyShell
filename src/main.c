@@ -137,7 +137,7 @@ sigint_handler(int sig)
 	 */
 	if (child_pid > 0) {
 		kill(child_pid, sig);
-		fprintf(stderr, "Killed by signal %d\n", sig);
+		fprintf(stderr, "Killed process %d by signal %d\n", child_pid, sig);
 	} else {
 		/* Reset the readline() */
 		write(1, "\n", 1);

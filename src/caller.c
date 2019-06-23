@@ -1,5 +1,7 @@
 /* caller.c */
 
+#define DEBUG
+
 #include <err.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -130,16 +132,27 @@ process_semi_expr(struct semi_expr *expr)
 
 	/* Set global for SIGINT handler. */
 	child_pid = pid;
-	waitpid(pid, &stat_val, 0);
+#ifdef DEBUG
+		fprintf(stderr, "Waiting for process %d...\n", child_pid);
+#endif  // DEBUG
+	waitpid(child_pid, &stat_val, 0);
 	/* Reset global for SIGINT handler. */
 	child_pid = -1;
 
 	/* Properly set return value. */
 	if (WIFEXITED(stat_val)) {
 		return_val = WEXITSTATUS(stat_val);
+#ifdef DEBUG
+		fprintf(stderr, "Process %d exited normally with exit code %d\n",
+				pid, return_val);
+#endif  // DEBUG
 	} else if (WIFSIGNALED(stat_val)) {
 		return_val = 128 + WTERMSIG(stat_val);
-	} else {
+#ifdef DEBUG
+		fprintf(stderr, "Process %d exited with signal %d\n",
+				pid, WTERMSIG(stat_val));
+#endif  // DEBUG
+} else {
 		return_val = -1;
 	}
 }
