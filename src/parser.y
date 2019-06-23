@@ -21,7 +21,7 @@ void yyerror(char const *);
 extern int yylex(void);
 
 /* Way of passing AST result out of bison */
-extern struct expr_s *expr_result;
+extern struct expr *expr_result;
 
 /* For yyerror */
 extern int line_num;
@@ -32,16 +32,20 @@ extern int return_val;
 %union {
 	char *str;
 	redirect_sgn red_sgn;
-	struct expr_s *expr_s;
-	struct semi_expr_s *semi_expr_s;
-	struct cmd_s *cmd_s;
+	struct expr *expr;
+	struct semi_expr *semi_expr;
+	struct pipe_expr *pipe_expr;
+	struct cmd *cmd;
+	struct redirection *redirection;
 }
 
-%destructor { free_expr($$); } <expr_s>
-%destructor { free_semi_expr($$); } <semi_expr_s>
-%destructor { free_cmd($$); } <cmd_s>
+%destructor { free_expr($$); } <expr>
+%destructor { free_semi_expr($$); } <semi_expr>
+%destructor { free_pipe_expr($$); } <pipe_expr>
+%destructor { free_redirection($$); } <redirection>
+%destructor { free_cmd($$); } <cmd>
 
-/* declare tokens */
+/* Declare tokens */
 %token SEMICOLON
 %token END_OF_FILE
 %token END_OF_LINE
@@ -49,25 +53,13 @@ extern int return_val;
 %token<str> ID
 %token<red_sgn> REDIRECT_SGN
 
-/* declare types of used nonterminals */
-/*
-%type<expr_s> expr
-%type<semi_expr_s> semi_expr
-%type<pipe_expr_s> pipe_expr
-%type<redirect_expr_s> redirect_expr
-%type<redirection_s> redirection
-%type<cmd_s> cmd
+/* Declare types of used nonterminals */
+%type<expr> semi_exprs
+%type<semi_expr> pipe_exprs semi_expr
+%type<pipe_expr> pipe_expr redirections
+%type<redirection> redirection
+%type<cmd> cmd ids
 
-%type<TODO: head of the list> semi_exprs
-%type<TODO: head of the list> pipe_exprs
-%type<TODO: head of the list> redirection
-%type<TODO: head of the list> pipe_exprs
-%type<TODO: head of the list> pipe_exprs
-*/
-
-%type<expr_s> semi_exprs
-%type<semi_expr_s> semi_expr
-%type<cmd_s> cmd ids
 %%
 
 expr:	semi_expr semi_exprs end
@@ -86,11 +78,9 @@ end:	END_OF_FILE
 	|	END_OF_LINE
 	;
 
-semi_expr: cmd
+semi_expr: pipe_expr pipe_exprs
 	{
-		struct semi_expr_s *semi_s = new_semi_expr();
-		semi_s->cmd = $1;
-		$$ = semi_s;
+		$$ = push_front_semi($2, $1);
 	}
 	;
 
@@ -105,6 +95,39 @@ semi_exprs: /* nothing */
 	|	SEMICOLON semi_expr semi_exprs
 	{
 		$$ = push_front_expr($3, $2);
+	}
+	;
+
+pipe_expr: cmd redirections
+	{
+		$2->cmd = $1;
+		$$ = $2;
+	}
+	;
+
+pipe_exprs: /* nothing */
+	{
+		$$ = new_semi_expr();
+	}
+	|	PIPE pipe_expr pipe_exprs
+	{
+		$$ = push_front_semi($3, $2);
+	}
+	;
+
+redirections: /* nothing */
+	{
+		$$ = new_pipe_expr();
+	}
+	|	redirection redirections
+	{
+		$$ = push_front_pipe($2, $1);
+	}
+	;
+
+redirection: REDIRECT_SGN ID
+	{
+		$$ = new_redirection($1, $2);
 	}
 	;
 
@@ -123,27 +146,6 @@ ids: /* nothing */
 		$$ = push_front_cmd($2, $1);
 	}
 	;
-
-/* UNUSED FOR PHASE1 ----------------------------------------------- */
-
-pipe_expr: redirect_expr
-	;
-
-pipe_exprs: /* nothing */
-	|	PIPE pipe_expr pipe_exprs
-	;
-
-redirect_expr: cmd redirections
-	;
-
-redirection: REDIRECT_SGN ID
-	;
-
-redirections: /* nothing */
-	|	redirection redirections
-	;
-
-/* ----------------------------------------------------------------- */
 
 %%
 

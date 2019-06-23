@@ -1,15 +1,30 @@
-MAKE= make
-SRC= src
-OUT= build
+CC=cc
+C_STD=c99
+CFLAGS=-Wall -std=$(C_STD) -pedantic -Wshadow -Wpointer-arith -Wcast-qual \
+	-Wstrict-prototypes
 
-all: src
+OBJ_FILES= src/main.o src/parser_structs.o src/reader.o src/caller.o src/cd.o
+TARGET = mysh
+TARGETS = src/parser.tab.h src/parser.tab.c src/lex.yy.c
 
-src:
-	$(MAKE) -C $(SRC)
-	mv $(SRC)/mysh .
+
+all: mysh
+
+src/parser.tab.h: src/parser.tab.c
+
+src/parser.tab.c: src/parser.y
+	bison -o $@ -d $<
+
+src/lex.yy.c: src/scanner.l src/parser.tab.h
+	flex -o $@ $<
+
+src/%.o: src/%.c
+	$(CC) -o $@ $(CFLAGS) -c $<
+
+mysh: src/parser.tab.c src/lex.yy.c $(OBJ_FILES)
+	$(CC) -o $@ $^ -lfl -lreadline
 
 clean:
-	$(MAKE) clean -C $(SRC)
-	rm -rf mysh
+	rm -rf $(OBJ_FILES) $(TARGETS) $(TARGET)
 
-.PHONY: cstyle all clean $(SRC)
+.PHONY: all clean

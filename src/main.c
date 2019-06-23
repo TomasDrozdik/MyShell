@@ -29,7 +29,7 @@ extern char *optarg;
 extern int optind, opterr, optopt;
 
 /* Result of parsing is placed here. */
-struct expr_s *expr_result = NULL;
+struct expr *expr_result = NULL;
 
 /* Used in scanner.lex and parser.y yyerror() to count lines. */
 int line_num = 1;
@@ -39,9 +39,6 @@ int error_occured = 0;
 
 /* Used in call() and yyerror() to track return value of last executed cmd. */
 int return_val = 0;
-
-/* Used in call() if custom cmd exit is called. */
-int custom_exit = 0;
 
 /* Used in sigint handler to know what child to kill. */
 int child_pid = -1;
@@ -82,7 +79,6 @@ main(int argc, char **argv)
 			break;
 		}
 	}
-
 	/* If -c <string> option was not used try input file. */
 	if (!input) {
 		if (optind != argc) {
@@ -96,7 +92,6 @@ main(int argc, char **argv)
 		}
 	}
 	run(input);
-
 	free(f);
 	free(input);
 	return (return_val);
@@ -115,18 +110,19 @@ run(struct input_s *input)
 			free(line);
 		}
 		/* In case of file as a input type break on first error */
-		if (error_occured && input->t == FILE_IN) {
-			/* expr_result has been freed by bison destructor */
-			return;
+		if (error_occured) {
+			if (input->t == FILE_IN) {
+				return;
+			} else {
+				error_occured = 0;
+				continue;
+			}
 		}
 		if (expr_result) {
 			call(expr_result);
 			free_expr(expr_result);
 		}
-		if (custom_exit) {
-			return;
-		}
-  }
+	}
 }
 
 void
@@ -136,6 +132,8 @@ sigint_handler(int sig)
 	 * Idea is that if there is no forked cmd we shall forget what we are
 	 * doing and create new shell line. So we'll just properly end the current
 	 * cmd.
+	 * In case of the pipeline being executed child_pid contains the pid of the
+	 * last program in the pipeline just like bash.
 	 */
 	if (child_pid > 0) {
 		kill(child_pid, sig);

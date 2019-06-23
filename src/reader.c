@@ -54,7 +54,7 @@ readln(struct input_s *in)
 		prompt = set_prompt(prompt);
 		line = readline(prompt);
 		free(prompt);
-		if (!line)
+		if (!line) {
 			break;
 		if (strcmp(line, "") != 0)
 			add_history(line);
@@ -65,7 +65,7 @@ readln(struct input_s *in)
 		break;
 	case FILE_IN:
 		if (getline(&line, &n, in->fd) == -1) {
-			/* In case of failiure free the buffer see getline(3) */
+			/* In case of failure free the buffer see getline(3) */
 			free(line);
 			line = NULL;
 		}
