@@ -29,7 +29,7 @@ extern char *optarg;
 extern int optind, opterr, optopt;
 
 /* Result of parsing is placed here. */
-struct expr_s *expr_result = NULL;
+struct expr *expr_result = NULL;
 
 /* Used in scanner.lex and parser.y yyerror() to count lines. */
 int line_num = 1;
@@ -39,9 +39,6 @@ int error_occured = 0;
 
 /* Used in call() and yyerror() to track return value of last executed cmd. */
 int return_val = 0;
-
-/* Used in call() if custom cmd exit is called. */
-int custom_exit = 0;
 
 /* Used in sigint handler to know what child to kill. */
 int child_pid = -1;
@@ -58,7 +55,6 @@ sigint_handler(int sig);
  */
 void
 run(struct input_s *);
-
 
 int
 main(int argc, char **argv)
@@ -78,32 +74,26 @@ main(int argc, char **argv)
 		case 'c':
 			input = input_str_init(optarg);
 			break;
-
 		case '?':
 			return (2);
 			break;
 		}
 	}
-
 	/* If -c <string> option was not used try input file. */
 	if (!input) {
 		if (optind != argc) {
 			if ((f = fopen(argv[optind], "r")) == NULL) {
 				err(1, "fopen");
 			}
-
 			input = input_file_init(f);
 		} else {
 			/* Default init */
 			input = input_default_init();
 		}
 	}
-
 	run(input);
-
 	free(f);
 	free(input);
-
 	return (return_val);
 }
 
@@ -121,22 +111,20 @@ run(struct input_s *input)
 		if (input->t != INVALID) {
 			free(line);
 		}
-
 		/* In case of file as a input type break on first error */
-		if (error_occured && input->t == FILE_IN) {
-			/* expr_result has been freed by bison destructor */
-			return;
+		if (error_occured) {
+			if (input->t == FILE_IN) {
+				return;
+			} else {
+				error_occured = 0;
+				continue;
+			}
 		}
-
 		if (expr_result) {
 			call(expr_result);
 			free_expr(expr_result);
 		}
-
-		if (custom_exit) {
-			return;
-		}
-    }
+	}
 }
 
 void
@@ -153,7 +141,6 @@ sigint_handler(int sig)
 	} else {
 		/* Reset the readline() */
 		write(1, "\n", 1);
-
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();

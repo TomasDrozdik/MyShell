@@ -12,23 +12,25 @@
 #include <unistd.h>
 
 int
-cd(int argc, char **argv)
+cd(int argc, arg_slist_t argv)
 {
 	char *dir = NULL;
 	char *prev_dir = NULL;
+	char *arg;
 	int need_to_free = 0;
 
 	if (argc == 1) {
 		dir = getenv("HOME");
 	} else if (argc == 2) {
-		if (strcmp(argv[1], "-") == 0) {
+		arg = STAILQ_NEXT(STAILQ_FIRST(&argv), entries)->arg;
+		if (strcmp(arg, "-") == 0) {
 			dir = getenv("OLDPWD");
 			if (!dir) {
 				warnx("cd: There is no previous directory set.");
 				return (1);
 			}
 		} else {
-			dir = argv[1];
+			dir = arg;
 		}
 	} else {
 		warnx("Usage ./cd [-|[directory]]");
