@@ -134,6 +134,8 @@ sigint_handler(int sig)
 	 * Idea is that if there is no forked cmd we shall forget what we are
 	 * doing and create new shell line. So we'll just properly end the current
 	 * cmd.
+	 * In case of the pipeline being executed child_pid contains the pid of the
+	 * last program in the pipeline just like bash.
 	 */
 	if (child_pid > 0) {
 		kill(child_pid, sig);

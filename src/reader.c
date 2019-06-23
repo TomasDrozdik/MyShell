@@ -65,7 +65,6 @@ readln(struct input_s *in)
 		prompt = set_prompt(prompt);
 		line = readline(prompt);
 		free(prompt);
-
 		if (!line) {
 			break;
 		}
@@ -73,24 +72,20 @@ readln(struct input_s *in)
 			add_history(line);
 		}
 		break;
-
 	case STRING_IN:
 		line = in->str;
 		in->t = INVALID;
 		break;
-
 	case FILE_IN:
 		if (getline(&line, &n, in->fd) == -1) {
-			/* In case of failiure free the buffer see getline(3) */
+			/* In case of failure free the buffer see getline(3) */
 			free(line);
 			line = NULL;
 		}
 		break;
-
 	case INVALID:
 		line = NULL;
 		break;
-
 	default:
 		/* Invalid in->t == INVALID */
 		errx(1, "Unsupported input_type");
@@ -116,6 +111,5 @@ set_prompt(char *prompt)
 	prompt = strcpy(prompt, header);
 	strcat(prompt, cwd);
 	strcat(prompt, footer);
-
 	return (prompt);
 }
