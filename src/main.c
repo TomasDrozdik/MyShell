@@ -65,8 +65,11 @@ main(int argc, char **argv)
 
 	/* Handle SIGINT */
 	struct sigaction act = { 0 };
+	act.sa_flags = SA_RESTART;
 	act.sa_handler = sigint_handler;
-	sigaction(SIGINT, &act, NULL);
+	if (sigaction(SIGINT, &act, NULL) == -1) {
+		err(1, "sigaction");
+	}
 
 	/* Parse arguments */
 	while ((opt = getopt(argc, argv, "c:")) != -1) {
@@ -136,8 +139,10 @@ sigint_handler(int sig)
 	 * last program in the pipeline just like bash.
 	 */
 	if (child_pid > 0) {
-		kill(child_pid, sig);
-		fprintf(stderr, "Killed process %d by signal %d\n", child_pid, sig);
+		if (kill(child_pid, sig) == -1) {
+			err(1, "kill");
+		}
+		fprintf(stderr, "Killed by signal %d\n", sig);
 	} else {
 		/* Reset the readline() */
 		write(1, "\n", 1);

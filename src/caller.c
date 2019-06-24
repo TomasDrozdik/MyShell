@@ -1,8 +1,7 @@
 /* caller.c */
 
-#define DEBUG
-
 #include <err.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -86,7 +85,7 @@ void
 process_semi_expr(struct semi_expr *expr)
 {
 	struct pipe_expr_entry *ent;
-	int i, pid, stat_val, previous_read_end;
+	int i, pid, stat, previous_read_end;
 	int pd[2];
 
 	if (pipe(pd) == -1) {
@@ -132,26 +131,17 @@ process_semi_expr(struct semi_expr *expr)
 
 	/* Set global for SIGINT handler. */
 	child_pid = pid;
-#ifdef DEBUG
-		fprintf(stderr, "Waiting for process %d...\n", child_pid);
-#endif  // DEBUG
-	waitpid(child_pid, &stat_val, 0);
+	if (waitpid(pid, &stat, 0) == -1) {
+		err(1, "waitpid");
+	}
 	/* Reset global for SIGINT handler. */
 	child_pid = -1;
 
 	/* Properly set return value. */
-	if (WIFEXITED(stat_val)) {
-		return_val = WEXITSTATUS(stat_val);
-#ifdef DEBUG
-		fprintf(stderr, "Process %d exited normally with exit code %d\n",
-				pid, return_val);
-#endif  // DEBUG
-	} else if (WIFSIGNALED(stat_val)) {
-		return_val = 128 + WTERMSIG(stat_val);
-#ifdef DEBUG
-		fprintf(stderr, "Process %d exited with signal %d\n",
-				pid, WTERMSIG(stat_val));
-#endif  // DEBUG
+	if (WIFEXITED(stat)) {
+		return_val = WEXITSTATUS(stat);
+	} else if (WIFSIGNALED(stat)) {
+		return_val = 128 + WTERMSIG(stat);
 } else {
 		return_val = -1;
 	}
