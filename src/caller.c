@@ -217,7 +217,7 @@ process_cmd(struct cmd *cmd)
 	char **argv;
 	struct arg_entry *ent;
 
-	if ((argv = (char *)malloc(sizeof (argv[0]) * argc)) == NULL) {
+	if ((argv = (char **)malloc(sizeof (argv[0]) * argc)) == NULL) {
 		err(1, "malloc");
 	}
 
@@ -232,7 +232,9 @@ process_cmd(struct cmd *cmd)
 	/* Add NULL termination for exec call */
 	argv[i] = NULL;
 	/* To stick to standard argv[0] should be stripped of path. */
-	argv[0] = malloc(strlen(argv[1]) + 1);
+	if ((argv[0] = (char *)malloc(strlen(argv[1]) + 1)) == NULL) {
+		err(1, "malloc");
+	}
 	memcpy(argv[0], argv[1], strlen(argv[1]) + 1);
 	argv[1] = strip_path(argv[1]);
 	/* Since we are already in forker process just call exec. */
