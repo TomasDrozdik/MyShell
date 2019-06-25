@@ -13,22 +13,22 @@ enum input_type {
 	INVALID,
 };
 
-struct input_s {
+struct input {
 	enum input_type t;
 	char *str;
 	FILE *fd;
 };
 
-struct input_s *
+struct input *
 input_default_init(void);
 
-struct input_s *
+struct input *
 input_str_init(char *);
 
-struct input_s *
+struct input *
 input_file_init(FILE *);
 
 char *
-readln(struct input_s *);
+readln(struct input *);
 
 #endif  // MYSHELL_SRC_READER_H_

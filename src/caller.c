@@ -10,11 +10,14 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <memory.h>
 
 #include "caller.h"
 #include "cd.h"
 
-#define CLOSE_PIPE(pd) close(pd[0]); close(pd[1]);
+#define CLOSE(fd) if (close(fd) == -1) {\
+		err(1, "close");\
+	};
 
 extern int return_val;
 extern int child_pid;
@@ -86,7 +89,12 @@ process_semi_expr(struct semi_expr *expr)
 {
 	struct pipe_expr_entry *ent;
 	int i, pid, stat, previous_read_end;
+	int *children_pids;
 	int pd[2];
+
+	if((children_pids = (int *)malloc(sizeof (int) * expr->len)) == NULL) {
+		err(1, "malloc");
+	}
 
 	if (pipe(pd) == -1) {
 		err(1, "pipe");
@@ -107,17 +115,23 @@ process_semi_expr(struct semi_expr *expr)
 			/* Redirect input. */
 			if (i != 0) {  /* exclude first cmd */
 				dup2(previous_read_end, 0);
-				close(previous_read_end);
+				CLOSE(previous_read_end);
 			}
 			/* Redirect output. */
 			if (i != expr->len - 1) {  /* exclude last cmd */
 				dup2(pd[1], 1);
-				CLOSE_PIPE(pd);
+				CLOSE(pd[0]);
+				CLOSE(pd[1]);
 			}
 			process_pipe_expr(ent->item);
 		default:
-			close(previous_read_end);
-			close(pd[1]);
+			children_pids[i] = pid;
+			if (i > 0) {
+				/* If there was more than one command => previous read end is set. */
+				CLOSE(previous_read_end);
+			}
+			CLOSE(pd[1]);
+
 			previous_read_end = pd[0];
 
 			if (pipe(pd) == -1) {
@@ -126,11 +140,18 @@ process_semi_expr(struct semi_expr *expr)
 		}
 		++i;
 	}
-	CLOSE_PIPE(pd);
-	close(previous_read_end);
+	/* Close last end of the pipe. */
+	CLOSE(pd[0]);
 
 	/* Set global for SIGINT handler. */
 	child_pid = pid;
+	/* Now wait for all other children in the pipeline. */
+	for (int j = 0; j < expr->len - 1; ++j) {
+		if (waitpid(children_pids[j], NULL, 0) == -1) {
+			err(1, "waitpid");
+		}
+	}
+	free(children_pids);
 	if (waitpid(pid, &stat, 0) == -1) {
 		err(1, "waitpid");
 	}
@@ -142,7 +163,7 @@ process_semi_expr(struct semi_expr *expr)
 		return_val = WEXITSTATUS(stat);
 	} else if (WIFSIGNALED(stat)) {
 		return_val = 128 + WTERMSIG(stat);
-} else {
+	} else {
 		return_val = -1;
 	}
 }
@@ -193,8 +214,12 @@ process_cmd(struct cmd *cmd)
 {
 	int i = 1;  /* i starts from 1 so that argv[1] cpy to argv[0] */
 	int argc = cmd->argc + 2;  /* + 2 for argv[0] argv[0] ... NULL */
-	char **argv = malloc(sizeof (argv[0]) * argc);
+	char **argv;
 	struct arg_entry *ent;
+
+	if ((argv = (char *)malloc(sizeof (argv[0]) * argc)) == NULL) {
+		err(1, "malloc");
+	}
 
 	/* Create and array of arguments for exec call */
 	STAILQ_FOREACH(ent, &cmd->argv, entries) {

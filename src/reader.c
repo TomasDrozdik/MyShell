@@ -14,10 +14,17 @@ char *
 set_prompt(char *prompt)
 {
 	char *header = "mysh:";
-	char *cwd = getenv("PWD");
+	char *cwd;
 	char *footer = "$ ";
 
-	prompt = realloc(prompt, strlen(header) + strlen(cwd) + strlen(footer) + 1);
+	if ((cwd = getenv("PWD")) == NULL) {
+		cwd = "env_PWD_unset";
+	}
+
+	if ((prompt = (char *)realloc(
+			prompt, strlen(header) + strlen(cwd) + strlen(footer) + 1)) == NULL) {
+		err(1, "realloc");
+	}
 	prompt = strcpy(prompt, header);
 	strcat(prompt, cwd);
 	strcat(prompt, footer);
@@ -28,34 +35,43 @@ set_prompt(char *prompt)
  * Definition of reader.h functions.
  */
 
-struct input_s *
+struct input *
 input_default_init(void)
 {
-	struct input_s *res = malloc(sizeof (struct input_s));
+	struct input *res;
+	if ((res = (struct input *)malloc(sizeof (struct input))) == NULL) {
+		err(1, "malloc");
+	}
 	res->t = CONSOLE_IN;
 	return (res);
 }
 
-struct input_s *
+struct input *
 input_str_init(char *str)
 {
-	struct input_s *res = malloc(sizeof (struct input_s));
+	struct input *res;
+	if ((res = (struct input *)malloc(sizeof (struct input))) == NULL) {
+		err(1, "malloc");
+	}
 	res->t = STRING_IN;
 	res->str = str;
 	return (res);
 }
 
-struct input_s *
+struct input *
 input_file_init(FILE *f)
 {
-	struct input_s *res = malloc(sizeof (struct input_s));
+	struct input *res;
+	if ((res = (struct input *)malloc(sizeof (struct input))) == NULL) {
+		err(1, "malloc");
+	}
 	res->t = FILE_IN;
 	res->fd = f;
 	return (res);
 }
 
 char *
-readln(struct input_s *in)
+readln(struct input *in)
 {
 	char *line = NULL;
 	char *prompt = NULL;

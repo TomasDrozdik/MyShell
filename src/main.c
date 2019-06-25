@@ -54,13 +54,13 @@ sigint_handler(int sig);
  * via call().
  */
 void
-run(struct input_s *);
+run(struct input *);
 
 int
 main(int argc, char **argv)
 {
 	int opt;
-	struct input_s *input = NULL;
+	struct input *input = NULL;
 	FILE *f = NULL;
 
 	/* Handle SIGINT */
@@ -101,7 +101,7 @@ main(int argc, char **argv)
 }
 
 void
-run(struct input_s *input)
+run(struct input *input)
 {
 	char *line;
 	while ((line = readln(input)) != NULL) {
@@ -139,9 +139,6 @@ sigint_handler(int sig)
 	 * last program in the pipeline just like bash.
 	 */
 	if (child_pid > 0) {
-		if (kill(child_pid, sig) == -1) {
-			err(1, "kill");
-		}
 		fprintf(stderr, "Killed by signal %d\n", sig);
 	} else {
 		/* Reset the readline() */
