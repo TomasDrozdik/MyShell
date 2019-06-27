@@ -7,13 +7,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "macros.h"
+
 struct expr *
 new_expr(void)
 {
 	struct expr *res;
-	if ((res = (struct expr *)malloc(sizeof (struct expr))) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (struct expr), res);
 	res->len = 0;
 	STAILQ_INIT(&res->semi_exprs);
 	return (res);
@@ -23,9 +23,7 @@ struct semi_expr *
 new_semi_expr(void)
 {
 	struct semi_expr *res;
-	if ((res = (struct semi_expr *)malloc(sizeof (struct semi_expr))) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (struct semi_expr), res);
 	res->len = 0;
 	STAILQ_INIT(&res->pipe_exprs);
 	return (res);
@@ -35,9 +33,7 @@ struct pipe_expr *
 new_pipe_expr(void)
 {
 	struct pipe_expr *res;
-	if ((res = (struct pipe_expr *)malloc(sizeof (struct pipe_expr))) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (struct pipe_expr), res);
 	res->cmd = NULL;
 	res->len = 0;
 	STAILQ_INIT(&res->redirects);
@@ -48,9 +44,7 @@ struct cmd *
 new_cmd(void)
 {
 	struct cmd *res;
-	if ((res = (struct cmd *)malloc(sizeof (struct cmd))) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (struct cmd), res);
 	res->argc = 0;
 	STAILQ_INIT(&res->argv);
 	return (res);
@@ -60,10 +54,7 @@ struct redirection *
 new_redirection(redirect_sgn sgn, char *fname)
 {
 	struct redirection *res;
-	if ((res = (struct redirection *)malloc(sizeof (struct redirection)))
-			== NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (struct redirection), res);
 	res->sgn = sgn;
 	res->fname = fname;
 	return (res);
@@ -73,10 +64,7 @@ struct expr *
 push_front_expr(struct expr *obj, struct semi_expr *item)
 {
 	struct semi_expr_entry *entry;
-	if ((entry = (struct semi_expr_entry *)malloc(
-			sizeof (struct semi_expr_entry))) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (struct semi_expr_entry), entry);
 	entry->item = item;
 	STAILQ_INSERT_HEAD(&obj->semi_exprs, entry, entries);
 	++obj->len;
@@ -87,10 +75,7 @@ struct semi_expr *
 push_front_semi(struct semi_expr *obj, struct pipe_expr *item)
 {
 	struct pipe_expr_entry *entry;
-	if ((entry = (struct pipe_expr_entry *)malloc(
-			sizeof (struct pipe_expr_entry))) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (struct pipe_expr_entry), entry);
 	entry->item = item;
 	STAILQ_INSERT_HEAD(&obj->pipe_exprs, entry, entries);
 	++obj->len;
@@ -101,10 +86,7 @@ struct pipe_expr *
 push_front_pipe(struct pipe_expr *obj, struct redirection *item)
 {
 	struct redirection_entry *entry;
-	if ((entry = (struct redirection_entry *)malloc(
-			sizeof (struct redirection_entry))) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (struct redirection_entry), entry);
 	entry->item = item;
 	STAILQ_INSERT_HEAD(&obj->redirects, entry, entries);
 	++obj->len;
@@ -115,10 +97,7 @@ struct cmd *
 push_front_cmd(struct cmd *obj, char *item)
 {
 	struct arg_entry *entry;
-	if ((entry = (struct arg_entry *)malloc(
-			sizeof (struct arg_entry))) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (struct arg_entry), entry);
 	entry->arg = item;
 	STAILQ_INSERT_HEAD(&obj->argv, entry, entries);
 	++obj->argc;

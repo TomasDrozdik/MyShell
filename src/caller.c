@@ -14,10 +14,7 @@
 
 #include "caller.h"
 #include "cd.h"
-
-#define CLOSE(fd) if (close(fd) == -1) {\
-		err(1, "close");\
-	};
+#include "macros.h"
 
 extern int return_val;
 extern int child_pid;
@@ -25,25 +22,25 @@ extern int child_pid;
 /*
  * RETURNS: -1 if internal command was not processed or its return value
  */
-int
+static int
 process_internal_command(struct semi_expr *expr);
 
-void
+static void
 process_semi_expr(struct semi_expr *);
 
-void
+static void
 process_pipe_expr(struct pipe_expr *);
 
-void
+static void
 process_redirects(redirect_slist_t redirects_list);
 
-void
+static void
 process_cmd(struct cmd *);
 
 /*
  * RETURNS: finename from str stripping path off
  */
-char *
+static char *
 strip_path(char *str);
 
 /*
@@ -63,7 +60,7 @@ call(struct expr *expr)
  * Other function definitions
  */
 
-int
+static int
 process_internal_command(struct semi_expr *expr)
 {
 	struct pipe_expr_entry *semi_ent;
@@ -84,7 +81,7 @@ process_internal_command(struct semi_expr *expr)
 	return (-1);  /* to indicate that custom command was not processed */
 }
 
-void
+static void
 process_semi_expr(struct semi_expr *expr)
 {
 	struct pipe_expr_entry *ent;
@@ -92,13 +89,9 @@ process_semi_expr(struct semi_expr *expr)
 	int *children_pids;
 	int pd[2];
 
-	if((children_pids = (int *)malloc(sizeof (int) * expr->len)) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (int) * expr->len, children_pids);
 
-	if (pipe(pd) == -1) {
-		err(1, "pipe");
-	}
+	PIPE(pd);
 
 	if ((i = process_internal_command(expr)) != -1) {
 		return_val = i;
@@ -134,9 +127,7 @@ process_semi_expr(struct semi_expr *expr)
 
 			previous_read_end = pd[0];
 
-			if (pipe(pd) == -1) {
-				err(1, "pipe");
-			}
+			PIPE(pd);
 		}
 		++i;
 	}
@@ -147,14 +138,10 @@ process_semi_expr(struct semi_expr *expr)
 	child_pid = pid;
 	/* Now wait for all other children in the pipeline. */
 	for (int j = 0; j < expr->len - 1; ++j) {
-		if (waitpid(children_pids[j], NULL, 0) == -1) {
-			err(1, "waitpid");
-		}
+		WAITPID(children_pids[j], NULL, 0);
 	}
 	free(children_pids);
-	if (waitpid(pid, &stat, 0) == -1) {
-		err(1, "waitpid");
-	}
+	WAITPID(pid, &stat, 0);
 	/* Reset global for SIGINT handler. */
 	child_pid = -1;
 
@@ -168,14 +155,14 @@ process_semi_expr(struct semi_expr *expr)
 	}
 }
 
-void
+static void
 process_pipe_expr(struct pipe_expr *expr)
 {
 	process_redirects(expr->redirects);
 	process_cmd(expr->cmd);
 }
 
-void
+static void
 process_redirects(redirect_slist_t redirects_list)
 {
 	struct redirection_entry *ent;
@@ -209,7 +196,7 @@ process_redirects(redirect_slist_t redirects_list)
 	}
 }
 
-void
+static void
 process_cmd(struct cmd *cmd)
 {
 	int i = 1;  /* i starts from 1 so that argv[1] cpy to argv[0] */
@@ -217,9 +204,7 @@ process_cmd(struct cmd *cmd)
 	char **argv;
 	struct arg_entry *ent;
 
-	if ((argv = (char **)malloc(sizeof (argv[0]) * argc)) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (argv[0]) * argc, argv);
 
 	/* Create and array of arguments for exec call */
 	STAILQ_FOREACH(ent, &cmd->argv, entries) {
@@ -232,14 +217,12 @@ process_cmd(struct cmd *cmd)
 	/* Add NULL termination for exec call */
 	argv[i] = NULL;
 	/* To stick to standard argv[0] should be stripped of path. */
-	if ((argv[0] = (char *)malloc(strlen(argv[1]) + 1)) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(strlen(argv[1]) + 1, argv[0]);
 	memcpy(argv[0], argv[1], strlen(argv[1]) + 1);
 	argv[1] = strip_path(argv[1]);
 	/* Since we are already in forker process just call exec. */
 	execvp(argv[0], argv + 1);
-	err(127, argv[0]);
+	err(127, "%s", argv[0]);
 }
 
 char *

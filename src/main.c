@@ -14,9 +14,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "caller.h"
+#include "macros.h"
 #include "parser_structs.h"
 #include "reader.h"
-#include "caller.h"
 
 /* Declare bison extern functions. */
 extern void yyparse(void);
@@ -67,9 +68,7 @@ main(int argc, char **argv)
 	struct sigaction act = { 0 };
 	act.sa_flags = SA_RESTART;
 	act.sa_handler = sigint_handler;
-	if (sigaction(SIGINT, &act, NULL) == -1) {
-		err(1, "sigaction");
-	}
+	SIGACTION(SIGINT, &act, NULL);
 
 	/* Parse arguments */
 	while ((opt = getopt(argc, argv, "c:")) != -1) {

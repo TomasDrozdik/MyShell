@@ -10,26 +10,10 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-char *
-set_prompt(char *prompt)
-{
-	char *header = "mysh:";
-	char *cwd;
-	char *footer = "$ ";
+#include "macros.h"
 
-	if ((cwd = getenv("PWD")) == NULL) {
-		cwd = "env_PWD_unset";
-	}
-
-	if ((prompt = (char *)realloc(
-			prompt, strlen(header) + strlen(cwd) + strlen(footer) + 1)) == NULL) {
-		err(1, "realloc");
-	}
-	prompt = strcpy(prompt, header);
-	strcat(prompt, cwd);
-	strcat(prompt, footer);
-	return (prompt);
-}
+static char *
+set_prompt(char *prompt);
 
 /*
  * Definition of reader.h functions.
@@ -39,9 +23,7 @@ struct input *
 input_default_init(void)
 {
 	struct input *res;
-	if ((res = (struct input *)malloc(sizeof (struct input))) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (struct input), res);
 	res->t = CONSOLE_IN;
 	return (res);
 }
@@ -50,9 +32,7 @@ struct input *
 input_str_init(char *str)
 {
 	struct input *res;
-	if ((res = (struct input *)malloc(sizeof (struct input))) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (struct input), res);
 	res->t = STRING_IN;
 	res->str = str;
 	return (res);
@@ -62,9 +42,7 @@ struct input *
 input_file_init(FILE *f)
 {
 	struct input *res;
-	if ((res = (struct input *)malloc(sizeof (struct input))) == NULL) {
-		err(1, "malloc");
-	}
+	MALLOC(sizeof (struct input), res);
 	res->t = FILE_IN;
 	res->fd = f;
 	return (res);
@@ -106,4 +84,25 @@ readln(struct input *in)
 		errx(1, "Unsupported input_type");
 	}
 	return (line);
+}
+
+static char *
+set_prompt(char *prompt)
+{
+	char *header = "mysh:";
+	char *cwd;
+	char *footer = "$ ";
+
+	if ((cwd = getenv("PWD")) == NULL) {
+		cwd = "env_PWD_unset";
+	}
+
+	if ((prompt = (char *)realloc(
+			prompt, strlen(header) + strlen(cwd) + strlen(footer) + 1)) == NULL) {
+		err(1, "realloc");
+		}
+	prompt = strcpy(prompt, header);
+	strcat(prompt, cwd);
+	strcat(prompt, footer);
+	return (prompt);
 }

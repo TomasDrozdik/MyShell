@@ -11,6 +11,7 @@
 
 #include "parser.tab.h"  // Include bison tokens
 #include "parser_structs.h"  // Include used structs
+#include "macros.h"
 
 extern void yyerror(char const *);
 extern int line_num;
@@ -57,7 +58,7 @@ ID			[^ \r\t\n<>|;#$]+
 		}
 
 {ID}	{
-			yylval.str = malloc(yyleng + 1);
+			MALLOC(yyleng + 1, yylval.str);
 			memcpy(yylval.str, yytext, yyleng + 1);
 			return (ID);
 		}
