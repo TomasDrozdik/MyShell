@@ -1,7 +1,7 @@
 /* cd.c */
 
 #define	_XOPEN_SOURCE	500
-#define	_GNU_SOURCE
+#define	_POSIX_C_SOURCE	200112L
 
 #include "cd.h"
 
@@ -39,8 +39,8 @@ cd(int argc, arg_slist_t argv)
 
 	/* Watch out for case where getenv("PWD") is NULL */
 	if ((prev_dir = getenv("PWD")) == NULL) {
-		if ((prev_dir = get_current_dir_name()) == NULL) {
-			err(1, "malloc");
+		if ((prev_dir = getcwd(NULL, 0)) == NULL) {
+			err(1, "getcwd");
 		}
 		need_to_free = 1;
 	}
@@ -65,8 +65,8 @@ cd(int argc, arg_slist_t argv)
 		free(prev_dir);
 	}
 	/* Get full path of current dir. */
-	if ((dir = get_current_dir_name()) == NULL) {
-		err(1, "malloc");
+	if ((dir = getcwd(NULL, 0)) == NULL) {
+		err(1, "getcwd");
 	}
 	if (setenv("PWD", dir, 1) == -1) {
 		free(dir);
