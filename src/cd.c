@@ -47,29 +47,33 @@ cd(int argc, arg_slist_t argv)
 
 	if (chdir(dir) == -1) {
 		warn("chdir");
-		return (2);
-	} else {
-		/* Set enviroment variables PWD and OLDPWD properly */
-		if (setenv("OLDPWD", prev_dir, 1) == -1) {
-			if (need_to_free) {
-				free(prev_dir);
-			}
-			warn("setenv:");
-			return (3);
-		}
 		if (need_to_free) {
 			free(prev_dir);
 		}
-		/* Get full path of current dir. */
-		if ((dir = get_current_dir_name()) == NULL) {
-			err(1, "malloc");
-		}
-		if (setenv("PWD", dir, 1) == -1) {
-			free(dir);
-			warn("setenv:");
-			return (3);
-		}
-		free(dir);
+		return (2);
 	}
+
+	/* Set enviroment variables PWD and OLDPWD properly */
+	if (setenv("OLDPWD", prev_dir, 1) == -1) {
+		if (need_to_free) {
+			free(prev_dir);
+		}
+		warn("setenv:");
+		return (3);
+	}
+	if (need_to_free) {
+		free(prev_dir);
+	}
+	/* Get full path of current dir. */
+	if ((dir = get_current_dir_name()) == NULL) {
+		err(1, "malloc");
+	}
+	if (setenv("PWD", dir, 1) == -1) {
+		free(dir);
+		warn("setenv:");
+		return (3);
+	}
+	free(dir);
+
 	return (0);
 }
