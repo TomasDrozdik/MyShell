@@ -89,14 +89,14 @@ process_semi_expr(struct semi_expr *expr)
 	int *children_pids;
 	int pd[2];
 
-	MALLOC(sizeof (int) * expr->len, children_pids);
-
-	PIPE(pd);
-
 	if ((i = process_internal_command(expr)) != -1) {
 		return_val = i;
 		return;
 	}
+
+	MALLOC(sizeof (int) * expr->len, children_pids);
+
+	PIPE(pd);
 
 	/* Fork processes. */
 	i = 0;
