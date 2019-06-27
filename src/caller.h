@@ -12,4 +12,4 @@
 void
 call(struct expr *expr);
 
-#endif  // MYSHELL_SRC_CALLER_H_
+#endif  /* MYSHELL_SRC_CALLER_H_ */

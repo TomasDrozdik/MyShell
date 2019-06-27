@@ -118,4 +118,4 @@ free_redirection(struct redirection *);
 void
 free_cmd(struct cmd *cmd);
 
-#endif  // MYSHELL_SRC_PARSER_STRUCTS_H_
+#endif  /* MYSHELL_SRC_PARSER_STRUCTS_H_ */

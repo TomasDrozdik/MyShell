@@ -153,7 +153,7 @@ void
 yyerror(char const *s)
 {
 	char *unexpected_token = NULL;
-	int desired_len = 25;
+	const int desired_len = 25;
 	// TODO: can be redone more efficiently (smthing like literal tokens)
 	if (!s) {
 		/* Call from signal handler just stop the execution */

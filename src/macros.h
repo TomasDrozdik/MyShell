@@ -29,4 +29,4 @@
 	};
 
 
-#endif  // MYSHELL_MACROS_H
+#endif  /* MYSHELL_MACROS_H */

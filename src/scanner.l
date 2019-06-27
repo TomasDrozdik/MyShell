@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include "parser_structs.h"
 
-#include "parser.tab.h"  // Include bison tokens
-#include "parser_structs.h"  // Include used structs
+#include "parser.tab.h"  /* Include bison tokens */
+#include "parser_structs.h"  /* Include used structs */
 #include "macros.h"
 
 extern void yyerror(char const *);

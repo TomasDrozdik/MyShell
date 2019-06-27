@@ -31,4 +31,4 @@ input_file_init(FILE *);
 char *
 readln(struct input *);
 
-#endif  // MYSHELL_SRC_READER_H_
+#endif  /* MYSHELL_SRC_READER_H_ */

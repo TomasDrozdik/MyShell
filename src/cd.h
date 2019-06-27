@@ -8,4 +8,4 @@
 int
 cd(int argc, arg_slist_t argv);
 
-#endif  // MYSHELL_SRC_CD_H
+#endif  /* MYSHELL_SRC_CD_H */
