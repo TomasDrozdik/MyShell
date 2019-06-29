@@ -94,7 +94,9 @@ main(int argc, char **argv)
 		}
 	}
 	run(input);
-	free(f);
+	if (f) {
+		fclose(f);
+	}
 	free(input);
 	return (return_val);
 }
