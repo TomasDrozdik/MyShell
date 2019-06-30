@@ -43,18 +43,15 @@ ID			[^ \r\t\n<>|;#$]+
 "|"	{ return (PIPE); }
 
 ">" {
-		yylval.red_sgn = OUT_RED;
-		return (REDIRECT_SGN);
+		return (OUT_RED_TOKEN);
 	}
 
 "<"	{
-		yylval.red_sgn = IN_RED;
-		return (REDIRECT_SGN);
+		return (IN_RED_TOKEN);
 	}
 
 ">>"	{
-			yylval.red_sgn = OUT_APPEND_RED;
-			return (REDIRECT_SGN);
+			return (OUT_APPEND_RED_TOKEN);
 		}
 
 {ID}	{

@@ -50,8 +50,10 @@ extern int return_val;
 %token END_OF_FILE
 %token END_OF_LINE
 %token PIPE
+%token IN_RED_TOKEN
+%token OUT_RED_TOKEN
+%token OUT_APPEND_RED_TOKEN
 %token<str> ID
-%token<red_sgn> REDIRECT_SGN
 
 /* Declare types of used nonterminals */
 %type<expr> semi_exprs
@@ -125,9 +127,17 @@ redirections: /* nothing */
 	}
 	;
 
-redirection: REDIRECT_SGN ID
+redirection: IN_RED_TOKEN ID
 	{
-		$$ = new_redirection($1, $2);
+		$$ = new_redirection(IN_RED, $2);
+	}
+	| OUT_RED_TOKEN ID
+	{
+		$$ = new_redirection(OUT_RED, $2);
+	}
+	| OUT_APPEND_RED_TOKEN ID
+	{
+		$$ = new_redirection(OUT_APPEND_RED, $2);
 	}
 	;
 
@@ -170,8 +180,12 @@ yyerror(char const *s)
 		unexpected_token = "ID";
 	} else if (strstr(s, "PIPE") - s == desired_len) {
 		unexpected_token = "|";
-	} else if (strstr(s, "REDIRECT_SGN") - s == desired_len) {
-		unexpected_token = "REDIRECT_SGN";
+	} else if (strstr(s, "IN_RED") - s == desired_len) {
+		unexpected_token = "<";
+	} else if (strstr(s, "OUT_RED") - s == desired_len) {
+		unexpected_token = ">";
+	} else if (strstr(s, "OUT_APPEND_RED") - s == desired_len) {
+		unexpected_token = ">>";
 	}
 
 	if (unexpected_token) {
