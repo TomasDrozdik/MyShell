@@ -117,6 +117,7 @@ process_semi_expr(struct semi_expr *expr)
 				CLOSE(pd[1]);
 			}
 			process_pipe_expr(ent->item);
+			break;
 		default:
 			children_pids[i] = pid;
 			if (i > 0) {

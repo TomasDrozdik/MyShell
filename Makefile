@@ -1,7 +1,8 @@
 CC=cc
 C_STD=c99
 CFLAGS=-Wall -std=$(C_STD) -pedantic -Wshadow -Wpointer-arith -Wcast-qual \
-	-Wstrict-prototypes -Wimplicit-function-declaration -Wmissing-braces
+	-Wstrict-prototypes -Wimplicit-function-declaration -Wmissing-braces\
+	-Wextra
 
 OBJ_FILES= src/main.o src/parser_structs.o src/reader.o src/caller.o src/cd.o
 TARGET = mysh
