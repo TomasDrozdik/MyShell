@@ -124,15 +124,15 @@ process_semi_expr(struct semi_expr *expr)
 				CLOSE(previous_read_end);
 			}
 			CLOSE(pd[1]);
-
 			previous_read_end = pd[0];
-
 			PIPE(pd);
 		}
 		++i;
 	}
-	/* Close last end of the pipe. */
+	/* Close last unused pipe and the last read_end end of the pipe. */
 	CLOSE(pd[0]);
+	CLOSE(pd[1]);
+	CLOSE(previous_read_end);
 
 	/* Set global for SIGINT handler. */
 	child_pid = pid;
